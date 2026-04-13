@@ -1,0 +1,190 @@
+/* ==========================================================================================================================================
+   ARCHIVO: App.css que contiene los estilos CSS globales y de la cabecera fija de la web.
+
+   🔹 Utiliza FLEXBOX para alinear horizontalmente el logotipo, los enlaces y los botones sin necesidad de cálculos matemáticos complejos.
+
+   🔹 Incluye las reglas de diseño adaptativo (Media Queries) para transformar el menú en pantallas de móviles y tablets.
+   ========================================================================================================================================== */
+
+.main-header {
+  /* Usamos un crema un poco más oscuro que el fondo general (#FDF8F5) para crear jerarquía visual */
+  background-color: #fcecdc; 
+  border-bottom: none;
+  /* Sombra más intensa y amplia para crear ese efecto de separación con el resto del contenido */
+  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.15); 
+  
+  /* position: sticky hace que la cabecera se quede siempre pegada arriba al hacer scroll */
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 10px 0;
+}
+
+.header-container {
+  /* Usa el 90% del ancho de la pantalla para mantener márgenes laterales elegantes */
+  width: 90%; 
+  margin: 0 auto;
+  padding: 0 20px;
+  
+  /* USO DE FLEXBOX: Coloca los elementos en fila y los separa equitativamente */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo-container {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto; /* Evita que el logo se encoja cuando la pantalla se hace más pequeña */
+}
+
+.logo-image {
+  height: 150px; 
+  width: auto; 
+  display: block;
+  object-fit: contain; /* Evita deformaciones y ajusta el PNG correctamente */
+}
+
+/* ------------------------------------------------------------------------------------------------ 
+   ESTILOS DEL MENÚ DE NAVEGACIÓN: 
+   Estos estilos se aplican a los enlaces principales (Inicio, Recetas, etc.)
+------------------------------------------------------------------------------------------------ */
+.nav-links {
+  flex: 2; 
+  display: flex;
+  justify-content: left; 
+  gap: 100px;
+  margin-left: 80px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--gris-texto);
+  font-weight: 600;
+  font-size: 25px; 
+  transition: color 0.3s ease; /* Transición suave para el efecto hover */
+}
+
+.nav-links a:hover {
+  color: var(--naranja-fuerte);
+}
+
+/* ------------------------------------------------------------------------------------------------ 
+   ESTILOS DE LA BARRA DE BÚSQUEDA Y DEL BOTÓN DE PUBLICACIÓN: 
+------------------------------------------------------------------------------------------------ */
+.header-actions {
+  flex: 0 0 auto; 
+  display: flex;
+  justify-content: flex-end; 
+  align-items: center;
+  gap: 20px; 
+}
+
+.search-bar {
+  padding: 15px 25px; 
+  border: 1px solid #E6DED7;
+  border-radius: 30px; 
+  background-color: white; 
+  width: 600px; 
+  font-size: 18px; 
+  color: var(--gris-texto);
+  transition: all 0.3s ease;
+}
+
+.search-bar:focus {
+  outline: none;
+  border-color: var(--naranja-fuerte);
+  width: 680px; /* Micro-interacción: Se estira aun más al hacer clic para escribir cómodamente */
+}
+
+.publish-button {
+  text-decoration: none;
+  background-color: var(--naranja-fuerte); 
+  color: white;
+  padding: 16px 55px; 
+  border-radius: 30px; 
+  font-weight: bold;
+  font-size: 18px; 
+  transition: opacity 0.3s ease;
+}
+
+.publish-button:hover {
+  opacity: 0.85; 
+}
+
+.main-content {
+  max-width: 90%; 
+  margin: 30px auto 50px; 
+  padding: 0 20px;
+}
+
+/* ------------------------------------------------------------------------------------------------ 
+   DISEÑO RESPONSIVE Y ADAPTABILIDAD MULTIPLATAFORMA (MÓVILES Y TABLETS): 
+   Estos estilos sobreescriben a los anteriores cuando la pantalla disminuye su tamaño.
+------------------------------------------------------------------------------------------------ */
+
+/* Pantallas medianas (Tablets - hasta 992px) */
+@media (max-width: 992px) {
+  .nav-links {
+    gap: 30px; /* Reducimos la separación del menú */
+    margin-left: 20px;
+  }
+  .nav-links a { 
+    font-size: 18px; /* Letra adaptada a tablet */
+  }
+  .search-bar { 
+    width: 250px; /* Buscador más compacto */
+  }
+  .search-bar:focus {
+    width: 300px; 
+  }
+  .publish-button {
+    padding: 12px 25px; 
+  }
+}
+
+/* Pantallas pequeñas (Móviles - hasta 768px) */
+@media (max-width: 768px) {
+  .header-container { 
+    /* Cambiamos la estructura Flexbox: en vez de una fila (row) se hace que los elementos se apilen hacia abajo (column) */
+    flex-direction: column; 
+    padding: 15px; 
+    gap: 20px; 
+  }
+
+  .logo-image { 
+    /* El logo de un tamaño razonable para la pantalla del móvil */
+    height: 60px; 
+  }
+
+  .nav-links { 
+    /* El menú se centra y ocupa todo el ancho */
+    width: 100%; 
+    margin-left: 0; 
+    justify-content: center; 
+    flex-wrap: wrap; /* Si no caben, bajan a la siguiente línea de forma natural */
+    gap: 20px; 
+  }
+
+  .header-actions {
+    width: 100%;
+    flex-direction: column; /* Buscador arriba, botón de publicar abajo */
+    gap: 15px;
+  }
+
+  .search-bar { 
+    width: 100%; 
+    box-sizing: border-box; /* Evita que el input se salga de los márgenes de la pantalla */
+  }
+  
+  .search-bar:focus {
+    width: 100%; 
+  }
+
+  .publish-button {
+    width: 100%; 
+    box-sizing: border-box;
+    text-align: center;
+  }
+}

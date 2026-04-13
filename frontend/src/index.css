@@ -1,0 +1,25 @@
+/* index.css */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
+
+/* DIFINICIÓNS DE LA PALETA DE COLORES CORPORATIVA  */
+:root {
+  --naranja-fuerte: #D35400;
+  --naranja-suave: #F19C79;
+  --crema-fondo: #FDF8F5;
+  --gris-texto: #333333;
+}
+
+body {
+  margin: 0;
+  font-family: 'Open Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Aplicamos el fondo crema y el texto gris para toda la web */
+  background-color: var(--crema-fondo); 
+  color: var(--gris-texto); 
+}
+
+h1, h2, h3, h4, h5 {
+  color: var(--gris-texto);
+  margin-top: 0;
+}
