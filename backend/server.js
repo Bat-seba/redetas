@@ -20,19 +20,20 @@ const cors = require('cors');           // Importa CORS que me permite permitir 
 const Receta = require('./models/Receta');    // Importa el modelo de receta para interactuar con la base de datos.
 const app = express();     // Crea una instancia de Express llamada "app" para iniciar el servidor.
 
+const authRoutes = require('./routes/auth');   // Importa las rutas de autenticación.
 
 // -------------------------------------------------------------------------------- 
 // CONFIGURACIÓN DEL SERVIDOR:
 // --------------------------------------------------------------------------------
 app.use(cors());          // Habilita CORS para permitir el acceso a la API desde cualquier origen y así evitar errores de seguridad.
 app.use(express.json());  // Habilita el uso de JSON en las solicitudes y respuestas, un formato comprensible por el servidor Node.js.
-
+app.use('/api/v1/auth', authRoutes);   // Utiliza las rutas de autenticación.
 
 // -------------------------------------------------------------------------------- 
 // CONEXIÓN A LA BASE DE DATOS:
 // --------------------------------------------------------------------------------
 mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log('¡Conexión exitosa a MongoDB Local! 🎉'))
+    .then(() => console.log('¡Conexión exitosa a MongoDB Local!'))
     .catch((error) => console.error('Error conectando a la base de datos:', error));
 
 
