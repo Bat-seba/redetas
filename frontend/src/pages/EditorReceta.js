@@ -58,7 +58,8 @@ function EditorReceta() {
       Swal.fire({
         title: '¿Estás segur@?',
         text: 'Se borrarán los datos introducidos hasta ahora.',
-        icon: 'warning' , 'confirmButtonColor': '#D35400',
+        icon: 'warning', 
+        confirmButtonColor: '#D35400',
         showCancelButton: true,
         confirmButtonText: 'Sí, salir',
         cancelButtonText: 'Me quedo'
@@ -71,14 +72,33 @@ function EditorReceta() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // VALIDACIÓN OBLIGATORIA: Al menos una categoría marcada en el checkbox
+    // VALIDACIONES PERSONALIZADAS CON SWAL.FIRE
+    
+    // 1. Título
+    if (receta.titulo.trim() === '') {
+        Swal.fire('¡Falta el título!', 'Por favor, dale un título a tu deliciosa receta.', 'warning');
+        return;
+    }
+
+    // 2. Categorías
     if (receta.categorias.length === 0) {
         Swal.fire('¡Atención!', 'Debes marcar al menos una característica dietética.', 'warning');
         return;
     }
 
+    // 3. Ingredientes
+    if (receta.ingredientes.trim() === '') {
+        Swal.fire('¡Faltan los ingredientes!', 'No podemos cocinar sin ingredientes. Escribe al menos uno.', 'warning');
+        return;
+    }
+
+    // 4. Instrucciones
+    if (receta.instrucciones.trim() === '') {
+        Swal.fire('¡Faltan las instrucciones!', 'Explícanos cómo se prepara tu receta paso a paso.', 'warning');
+        return;
+    }
+
     
-    // VALIDACIÓN OBLIGATORIA: Título de la receta   
     const formData = new FormData();
     formData.append('titulo', receta.titulo);
     formData.append('ingredientes', receta.ingredientes);
@@ -120,7 +140,7 @@ function EditorReceta() {
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '25px' }}>
             <label style={{ fontWeight: 'bold', fontSize: '20px', display: 'block', marginBottom: '8px' }}>Título:</label>
-            <input type="text" name="titulo" value={receta.titulo} onChange={handleChange} required style={{ width: '100%', padding: '15px', fontSize: '18px', borderRadius: '8px', border: '1px solid #ccc' }} />
+            <input type="text" name="titulo" value={receta.titulo} onChange={handleChange} style={{ width: '100%', padding: '15px', fontSize: '18px', borderRadius: '8px', border: '1px solid #ccc' }} />
           </div>
 
           {/* SECCIÓN DE CUADRADITOS (CHECKBOXES) DE CATEGORÍAS */}
@@ -146,12 +166,12 @@ function EditorReceta() {
 
           <div style={{ marginBottom: '25px' }}>
             <label style={{ fontWeight: 'bold', fontSize: '20px', display: 'block', marginBottom: '8px' }}>Ingredientes:</label>
-            <textarea name="ingredientes" value={receta.ingredientes} onChange={handleChange} required rows="5" style={{ width: '100%', padding: '15px', fontSize: '18px', borderRadius: '8px', border: '1px solid #ccc' }} />
+            <textarea name="ingredientes" value={receta.ingredientes} onChange={handleChange} rows="5" style={{ width: '100%', padding: '15px', fontSize: '18px', borderRadius: '8px', border: '1px solid #ccc' }} />
           </div>
 
           <div style={{ marginBottom: '25px' }}>
             <label style={{ fontWeight: 'bold', fontSize: '20px', display: 'block', marginBottom: '8px' }}>Instrucciones:</label>
-            <textarea name="instrucciones" value={receta.instrucciones} onChange={handleChange} required rows="8" style={{ width: '100%', padding: '15px', fontSize: '18px', borderRadius: '8px', border: '1px solid #ccc' }} />
+            <textarea name="instrucciones" value={receta.instrucciones} onChange={handleChange} rows="8" style={{ width: '100%', padding: '15px', fontSize: '18px', borderRadius: '8px', border: '1px solid #ccc' }} />
           </div>
 
           <div style={{ marginBottom: '30px', padding: '20px', border: '2px dashed #D35400', borderRadius: '8px' }}>
