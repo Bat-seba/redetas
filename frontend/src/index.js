@@ -27,4 +27,4 @@ root.render(
 // para registrar los resultados (por ejemplo: reportWebVitals(console.log)) 
 // o envíalos a un servicio de análisis web (como Google Analytics). 
 // Leer en: https://bit.ly/CRA-vitals
-reportWebVitals();reportWebVitals();
+reportWebVitals();

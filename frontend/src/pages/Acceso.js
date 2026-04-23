@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import '../App.css'; // Importamos tu CSS principal para mantener el diseño
-import axios from 'axios';  // Importamos Axios
-import { useNavigate } from 'react-router-dom';  // Importamos useNavigate para navegar entre rutas de la web
+import '../App.css'; 
+import axios from 'axios';  
+import { useNavigate } from 'react-router-dom';  
+import Swal from 'sweetalert2'; // Importamos la magia de SweetAlert2
 
 function Acceso() {
-  const navigate = useNavigate();  // Hook para navegar entre rutas
-  const [isLogin, setIsLogin] = useState(true);  // Iniciamos con el formulario de Login
+  const navigate = useNavigate();  
+  const [isLogin, setIsLogin] = useState(true);  
 
   const [formData, setFormData] = useState({
     username: '',
@@ -24,30 +25,33 @@ function Acceso() {
     e.preventDefault(); 
     
     if (isLogin) {
-      // === AQUÍ EMPIEZA LA CONEXIÓN REAL DE LOGIN ===
       try {
         const respuesta = await axios.post('http://localhost:3000/api/v1/auth/login', {
           email: formData.email,
           password: formData.password
         });
 
-        alert("¡Bienvenido a Redetas! " + respuesta.data.mensaje); 
+        // Aviso elegante de ÉXITO (Login)
+        await Swal.fire({
+          title: '¡Bienvenido a Redetas!',
+          text: respuesta.data.mensaje,
+          icon: 'success',
+          confirmButtonColor: '#D35400'
+        });
         
-        // Guardamos los datos del usuario en la memoria del navegador
         localStorage.setItem('usuarioRedetas', JSON.stringify(respuesta.data.usuario));
-        
-        // ¡Magia! Redirigimos al usuario a la página de inicio
         navigate('/');
 
       } catch (error) {
-        if (error.response) {
-          alert("Error: " + error.response.data.mensaje); // Ej: Credenciales incorrectas
-        } else {
-          alert("Error de conexión con el servidor.");
-        }
+        // Aviso elegante de ERROR (Login)
+        Swal.fire({
+          title: 'Ups...',
+          text: error.response ? error.response.data.mensaje : "Error de conexión con el servidor.",
+          icon: 'error',
+          confirmButtonColor: '#D35400'
+        });
       }
     } else {
-      // === AQUÍ EMPIEZA LA CONEXIÓN REAL DE REGISTRO ===
       try {
         const respuesta = await axios.post('http://localhost:3000/api/v1/auth/registro', {
           username: formData.username,
@@ -55,18 +59,25 @@ function Acceso() {
           password: formData.password
         });
 
-        alert("¡Éxito! " + respuesta.data.mensaje); 
+        // Aviso elegante de ÉXITO (Registro)
+        Swal.fire({
+          title: '¡Cuenta creada!',
+          text: respuesta.data.mensaje,
+          icon: 'success',
+          confirmButtonColor: '#D35400'
+        });
         
-        // Limpiamos el formulario y le pasamos a la pestaña de Login para que entre
         setFormData({ username: '', email: '', password: '' });
         setIsLogin(true); 
 
       } catch (error) {
-        if (error.response) {
-          alert("Error: " + error.response.data.mensaje);
-        } else {
-          alert("Error de conexión con el servidor. ¿Está encendido Node.js?");
-        }
+        // Aviso elegante de ERROR (Registro)
+        Swal.fire({
+          title: 'Error al registrar',
+          text: error.response ? error.response.data.mensaje : "Error de conexión con el servidor.",
+          icon: 'error',
+          confirmButtonColor: '#D35400'
+        });
       }
     }
   };

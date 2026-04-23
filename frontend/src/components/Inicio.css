@@ -30,14 +30,16 @@
    ESTILOS DE LA TARJETA INDIVIDUAL:
 ------------------------------------------------------------------------------------------------ */
 .receta-card {
-  background-color: white; /* Tarjeta blanca para que resalte sobre el fondo crema estructural */
+  background-color: white; 
   border-radius: 12px; 
-  overflow: hidden; 
+  
+  /* Cambiamos hidden por visible para que no "corte" el cartelito de las categorías */
+  overflow: visible; 
+  
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); 
   transition: transform 0.3s ease;
 }
 
-/* Micro-interacción: La tarjeta "flota" ligeramente hacia arriba al pasar el ratón */
 .receta-card:hover {
   transform: translateY(-5px); 
 }
@@ -46,6 +48,10 @@
   height: 180px;
   overflow: hidden;
   background-color: var(--crema-fondo); 
+  
+  /*  Redondeamos manualmente las esquinas superiores de la foto */
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
 }
 
 .card-image {
@@ -111,11 +117,12 @@
   height: 40px;
   object-fit: contain; /* Garantiza que el icono no se recorte ni deforme */
   transition: transform 0.2s ease;
+  cursor: pointer; 
 }
 
-/* Micro-interacción: al pasar el ratón, el icono crece un poquito para dar feedback visual */
+/* Se sube a 1.25 para que al pasar el ratón, el icono crezca más y se note bien */
 .icono-categoria-img:hover {
-  transform: scale(1.1);
+  transform: scale(1.25);
 }
 
 /* ------------------------------------------------------------------------------------------------ 
@@ -164,6 +171,53 @@
   border-radius: 4px;
   padding: 8px;
   cursor: pointer;
+}
+
+/* ------------------------------------------------------------------------------------------------ 
+   MAGIA: TEXTO FLOTANTE INSTANTÁNEO PARA LOS ICONOS
+------------------------------------------------------------------------------------------------ */
+.contenedor-icono-magico {
+  position: relative;
+  display: inline-block;
+}
+
+.texto-flotante {
+  visibility: hidden;
+  width: max-content;
+  background-color: var(--naranja-fuerte); 
+  color: white;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 10px;
+  position: absolute;
+  z-index: 10;
+  bottom: 120%; /* Se coloca justo encima del icono */
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  font-size: 12px;
+  font-weight: bold;
+  pointer-events: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* El piquito del bocadillo apuntando hacia abajo */
+.texto-flotante::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: var(--naranja-fuerte) transparent transparent transparent;
+}
+
+/* Al pasar el ratón, el texto se hace visible al instante */
+.contenedor-icono-magico:hover .texto-flotante {
+  visibility: visible;
+  opacity: 1;
 }
 
 /* ------------------------------------------------------------------------------------------------ 
