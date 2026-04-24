@@ -226,6 +226,10 @@ function Inicio() {
                     <button className="btn-view-recipe">
                       Ver Receta
                     </button>
+                    {/* RED DE SEGURIDAD PARA EL CONTADOR DE YUMMYS */}
+                    <div style={{ marginTop: '10px', fontSize: '16px', fontWeight: 'bold', color: '#D35400' }}>
+                       {Array.isArray(receta.yummys) ? receta.yummys.length : 0} 😋
+                    </div>
 
                     <div className="form-actions-crud">
                       {/* Al estar dentro del Scope del .map(), la función sabe exactamente a qué receta nos referimos */}

@@ -15,6 +15,8 @@ const recetaSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Las instrucciones son obligatorias']
   },
+  yummys: { type: [String], default: [] },
+  comentarios: { type: Array, default: [] },
   //  lista (Array) de textos
   categorias: {
     type: [String], 
