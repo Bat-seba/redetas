@@ -55,7 +55,11 @@ function DetalleReceta() {
   }, [id]); 
 
   const handleYummy = async () => {
-    if (!usuarioLogueado) return Swal.fire('¡Ups!', 'Inicia sesión para dar Yummy.', 'info');
+    // Restauramos la validación original: Si no hay usuario, bloqueamos
+    if (!usuarioLogueado) {
+      return Swal.fire('¡Ups!', 'Si quieres dejar tu Yummy😋, inicia sesión o regístrate si aún no lo has hecho.', 'info');
+    }
+
     setAnimarBeso(true);
     setTimeout(() => setAnimarBeso(false), 600); 
 
@@ -64,9 +68,10 @@ function DetalleReceta() {
         userId: usuarioLogueado._id || usuarioLogueado.id
       });
       setYummysArray(res.data);
-    } catch (error) { console.error("Error Yummy"); }
+    } catch (error) { 
+      console.error("Error Yummy"); 
+    }
   };
-
   const handlePublicarComentario = async () => {
     if (!usuarioLogueado) return Swal.fire('¡Ups!', 'Inicia sesión para comentar.', 'info');
     if (nuevoComentario.trim() === "") return;

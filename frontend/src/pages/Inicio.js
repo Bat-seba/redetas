@@ -130,8 +130,7 @@ function Inicio() {
                     <span style={{ fontWeight: 'bold', fontSize: '16px' }}>{receta.nombreAutor}</span>
                   </Link>
                   <div style={{ color: '#D35400', fontWeight: 'bold', fontSize: '18px' }}>
-                    {receta.yummys || 0} 😋
-                  </div>
+                  {Array.isArray(receta.yummys) ? receta.yummys.length : 0} 😋                  </div>
                 </div>
 
                 {/* 4. CARACTERÍSTICAS (Con cartelitos instantáneos) */}

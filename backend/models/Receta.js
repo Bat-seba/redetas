@@ -1,3 +1,6 @@
+// Receta.js sirve para definir el "molde" o esquema para nuestras recetas
+
+
 const mongoose = require('mongoose');
 
 // Definimos el "molde" o esquema para nuestras recetas
@@ -15,8 +18,12 @@ const recetaSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Las instrucciones son obligatorias']
   },
-  yummys: { type: [String], default: [] },
-  comentarios: { type: Array, default: [] },
+  
+  yummys: { 
+    type: [String], default: [] },
+    comentarios: { type: Array, default: [] 
+  },
+  
   //  lista (Array) de textos
   categorias: {
     type: [String], 
