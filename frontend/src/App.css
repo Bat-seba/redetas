@@ -173,15 +173,24 @@
     gap: 15px;
   }
 
-  .search-bar { 
-    width: 100%; 
-    box-sizing: border-box; /* Evita que el input se salga de los márgenes de la pantalla */
-  }
-  
-  .search-bar:focus {
-    width: 100%; 
-  }
+  /* Buscador adaptado */
+  .search-bar {
+  padding: 15px 25px; 
+  border: 1px solid #E6DED7;
+  border-radius: 30px; 
+  background-color: white; 
+  width: 800px; /* 800px para mantener el efecto de expansión */
+  font-size: 18px; 
+  color: var(--gris-texto);
+  transition: all 0.3s ease;
+}
 
+/* Micro-interacción: Se estira aun más al hacer clic para escribir cómodamente */
+.search-bar:focus {
+  outline: none;
+  border-color: var(--naranja-fuerte);
+  width: 880px; /* Aumentado de 680px a 780px para mantener el efecto de expansión */
+}
   .publish-button {
     width: 100%; 
     box-sizing: border-box;
