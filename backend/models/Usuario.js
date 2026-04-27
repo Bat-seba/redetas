@@ -26,6 +26,10 @@ const usuarioSchema = new mongoose.Schema({
     type: String, 
     default: '' 
   },
+  rol: { 
+        type: String, 
+        default: 'user' 
+  },
   fecha_registro: { 
     type: Date, 
     default: Date.now // Se pone la fecha y hora actual automáticamente
@@ -34,6 +38,7 @@ const usuarioSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Receta'
   }],
+  
 });
 
 // Exportamos el modelo para poder usarlo en nuestras rutas

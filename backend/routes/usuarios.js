@@ -5,6 +5,7 @@ const router = express.Router();
 const multer = require('multer');
 const usuarioController = require('../controllers/usuarioController');
 
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'uploads/') 
@@ -25,5 +26,14 @@ router.get('/:id', usuarioController.obtenerUsuarioPorId);
 
 // 3. Guardar/Quitar Favoritos
 router.put('/:id/guardar', usuarioController.toggleGuardarReceta);
+
+// 4. Cambiar contraseña
+router.put('/:id/password', usuarioController.actualizarPassword);
+
+// 5. Eliminar cuenta
+router.delete('/:id', usuarioController.eliminarUsuario);
+
+// 6. Obtener todos los usuarios
+router.get('/admin/usuarios', usuarioController.obtenerTodosLosUsuarios);
 
 module.exports = router;

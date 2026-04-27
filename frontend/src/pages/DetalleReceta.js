@@ -191,8 +191,8 @@ function DetalleReceta() {
           
           <nav className="nav-links">
             <Link to="/">Inicio</Link>
-            <Link to="/#">Recetas</Link>
-            <Link to="/#">Comunidad</Link>
+            <Link to="/#">Más populares</Link>
+            <Link to="/#">Blog</Link>
           </nav>
           
           <div className="header-actions">
@@ -219,7 +219,7 @@ function DetalleReceta() {
                       <span style={{ fontSize: '12px', color: '#888' }}>Conectado como</span>
                       <br/><strong style={{ color: 'var(--gris-texto)' }}>{usuarioLogueado.username}</strong>
                     </div>
-                    <Link to="/mi-cuenta" style={{ textDecoration: 'none', color: 'var(--gris-texto)', padding: '8px 10px', borderRadius: '8px', display: 'block' }}>👤 Mi Cuenta / Panel</Link>
+                    <Link to="/mi-cuenta" style={{ textDecoration: 'none', color: 'var(--gris-texto)', padding: '8px 10px', borderRadius: '8px', display: 'block' }}>👤 Mi Cuenta </Link>
                     <button onClick={cerrarSesion} style={{ width: '100%', textAlign: 'left', background: 'none', border: 'none', borderTop: '1px solid #eee', paddingTop: '10px', marginTop: '5px', color: '#D93025', cursor: 'pointer', fontWeight: 'bold' }}>🚪 Cerrar sesión</button>
                   </div>
                 )}

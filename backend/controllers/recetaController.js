@@ -214,3 +214,26 @@ exports.eliminarReceta = async (req, res) => {
         res.status(500).json({ mensaje: 'Hubo un error al borrar la receta.' });
     }
 };
+
+// =========================================================================
+// 7. FUNCIÓN PARA OBTENER TODAS LAS RECETAS (ADMINISTRADOR)
+// =========================================================================
+exports.obtenerTodasLasRecetas = async (req, res) => {
+    try {
+        const recetas = await Receta.find().populate('autor', 'username');
+        res.json(recetas);
+    } catch (error) { res.status(500).send(error); }
+};
+
+
+// --- OBTENER TODAS LAS RECETAS (SOLO PARA ADMIN) ---
+exports.obtenerTodasLasRecetas = async (req, res) => {
+    try {
+        // Buscamos todas las recetas y traemos el nombre de su autor
+        const recetas = await Receta.find().populate('autor', 'username');
+        res.status(200).json(recetas);
+    } catch (error) {
+        console.error("Error al obtener recetas para admin:", error);
+        res.status(500).json({ mensaje: 'Error al obtener recetas' });
+    }
+};

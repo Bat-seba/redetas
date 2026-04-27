@@ -9,6 +9,9 @@ import DetalleReceta from './pages/DetalleReceta';
 import MiCuenta from './pages/MiCuenta';   
 import FavoritosGuardados from './pages/FavoritosGuardados';
 import PerfilPublico from './pages/PerfilPublico';
+import Configuracion from './pages/Configuracion';
+import AdminPanel from './pages/AdminPanel';
+
 
 function App() {
   return (
@@ -22,6 +25,8 @@ function App() {
         <Route path="/mi-cuenta" element={<MiCuenta />} />
         <Route path="/mis-favoritos" element={<FavoritosGuardados />} />
         <Route path="/usuario/:id" element={<PerfilPublico />} />
+        <Route path="/configuracion" element={<Configuracion />} />
+        <Route path="/admin" element={<AdminPanel />} />
       </Routes>
     </Router>
   );

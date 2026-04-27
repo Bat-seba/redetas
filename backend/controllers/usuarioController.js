@@ -1,6 +1,8 @@
 // backend/controllers/usuarioController.js sirve para actualizar el perfil del usuario en la base de datos.
 
 const Usuario = require('../models/Usuario');
+const bcrypt = require('bcrypt');   // Para encriptar la contraseña
+
 
 exports.actualizarPerfil = async (req, res) => {
     try {
@@ -88,5 +90,61 @@ exports.toggleGuardarReceta = async (req, res) => {
     } catch (error) {
         console.error("Error en toggleGuardarReceta:", error);
         res.status(500).json({ mensaje: "Error en el servidor" });
+    }
+};
+
+// --- CAMBIAR CONTRASEÑA ---
+exports.actualizarPassword = async (req, res) => {
+    try {
+        const { passwordAnterior, passwordNueva } = req.body;
+        const usuario = await Usuario.findById(req.params.id);
+
+        if (!usuario) {
+            return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+        }
+
+        // 1. Comprobar si la contraseña que ha puesto el usuario coincide con la de la BD
+        const esCorrecta = await bcrypt.compare(passwordAnterior, usuario.password);
+        
+        if (!esCorrecta) {
+            return res.status(400).json({ mensaje: 'La contraseña actual no es correcta' });
+        }
+
+        // 2. Si es correcta, encriptamos la nueva
+        const salt = await bcrypt.genSalt(10);
+        usuario.password = await bcrypt.hash(passwordNueva, salt);
+
+        // 3. Guardamos los cambios
+        await usuario.save();
+
+        res.json({ mensaje: 'Contraseña actualizada con éxito' });
+
+    } catch (error) {
+        console.error("Error detallado:", error); // Esto te dirá el fallo real en la terminal
+        res.status(500).json({ mensaje: 'Error interno del servidor al cambiar contraseña' });
+    }
+};
+
+// --- ELIMINAR CUENTA ---
+exports.eliminarUsuario = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await Usuario.findByIdAndDelete(id);
+        res.json({ mensaje: 'Cuenta eliminada correctamente' });
+    } catch (error) {
+        res.status(500).json({ mensaje: 'Error al eliminar la cuenta' });
+    }
+};
+
+
+// --- OBTENER TODOS LOS USUARIOS (SOLO PARA ADMIN) ---
+exports.obtenerTodosLosUsuarios = async (req, res) => {
+    try {
+        // Buscamos todos los usuarios, pero NO enviamos las contraseñas por seguridad
+        const usuarios = await Usuario.find().select('-password');
+        res.status(200).json(usuarios);
+    } catch (error) {
+        console.error("Error al obtener la lista de usuarios:", error);
+        res.status(500).json({ mensaje: 'Error interno al obtener usuarios' });
     }
 };

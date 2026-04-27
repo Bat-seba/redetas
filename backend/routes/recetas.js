@@ -36,4 +36,6 @@ router.delete('/:id/comentarios/:comentarioId', recetaController.eliminarComenta
 router.post('/:id/comentarios/:comentarioId/respuestas', recetaController.responderComentario);
 router.delete('/:id/comentarios/:comentarioId/respuestas/:respuestaId', recetaController.eliminarRespuesta);
 
+router.get('/admin/todas', recetaController.obtenerTodasLasRecetas);
+
 module.exports = router;

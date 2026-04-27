@@ -63,7 +63,12 @@ router.post('/login', async (req, res) => {
     // 3. Si todo está bien, le damos la bienvenida (Código 200 OK)
     res.status(200).json({ 
       mensaje: 'Inicio de sesión exitoso',
-      usuario: { id: usuario._id, username: usuario.username, email: usuario.email }
+      usuario: { 
+        id: usuario._id, 
+        username: usuario.username, 
+        email: usuario.email,
+        rol: usuario.rol 
+      }
     });
 
   } catch (error) {
