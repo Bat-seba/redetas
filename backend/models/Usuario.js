@@ -1,3 +1,5 @@
+// Usuario.js sirve para definir el "molde" o esquema para nuestros usuarios
+
 const mongoose = require('mongoose');
 
 // Definimos el "molde" o esquema para nuestros usuarios

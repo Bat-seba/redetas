@@ -1,3 +1,8 @@
+// ==========================================================================================================================================
+// ARCHIVO: DetalleReceta.js 
+// 🔹 Detalle de una receta.
+// ==========================================================================================================================================
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
@@ -14,19 +19,20 @@ import iconoSinHuevo from '../components/iconos/icono_sin_huevo.png';
 import iconoSinLeche from '../components/iconos/icono_sin_leche.png';
 
 function DetalleReceta() {
-  const { id } = useParams(); 
-  const usuarioLogueado = JSON.parse(localStorage.getItem('usuarioRedetas'));
+  const { id } = useParams();    // Para obtener el id de la receta
+  const usuarioLogueado = JSON.parse(localStorage.getItem('usuarioRedetas'));  // Para saber si el usuario esta logueado
   
-  const [receta, setReceta] = useState(null);
-  const [recetasSimilares, setRecetasSimilares] = useState([]);
+  const [receta, setReceta] = useState(null);    //  Para mostrar la receta
+  const [recetasSimilares, setRecetasSimilares] = useState([]);   // Para mostrar recetas similares
   
-  const [yummysArray, setYummysArray] = useState([]);
-  const [animarBeso, setAnimarBeso] = useState(false); 
-  const [comentarios, setComentarios] = useState([]);
-  const [nuevoComentario, setNuevoComentario] = useState("");
+  const [yummysArray, setYummysArray] = useState([]);    // Para mostrar los yummys
+  const [animarBeso, setAnimarBeso] = useState(false);     // Para animar el beso
+  const [comentarios, setComentarios] = useState([]);    // Para mostrar los comentarios
+  const [nuevoComentario, setNuevoComentario] = useState("");   // Para publicar un comentario
   
-  const [comentarioAResponder, setComentarioAResponder] = useState(null);
-  const [textoRespuesta, setTextoRespuesta] = useState("");
+  const [comentarioAResponder, setComentarioAResponder] = useState(null);    // Para responder a un comentario
+  const [textoRespuesta, setTextoRespuesta] = useState("");    // Para responder a un comentario
+  const [datosUsuarioHeader, setDatosUsuarioHeader] = useState(null);   // Foto del usuario logueado actualizada en el header
 
   const mapaIconos = {
     "Sin gluten": iconoSinGluten, "Sin huevo": iconoSinHuevo, "Sin leche": iconoSinLeche,
@@ -40,14 +46,24 @@ function DetalleReceta() {
   useEffect(() => {
     const cargarDatos = async () => {
       try {
+        // 1. Se carga la receta 
         const resReceta = await axios.get(`http://localhost:3000/api/v1/recetas/${id}`);
         setReceta(resReceta.data);
         setYummysArray(resReceta.data.yummys || []);
         setComentarios(resReceta.data.comentarios || []);
 
+        // 2. Se cargan recetas similares
         const resSimilares = await axios.get('http://localhost:3000/api/v1/recetas');
         const filtradas = resSimilares.data.filter(r => r._id !== id).slice(0, 4); 
         setRecetasSimilares(filtradas);
+
+        // 3. Se cargan los datos del usuario logueado para el header
+        if (usuarioLogueado) {
+          const userId = usuarioLogueado._id || usuarioLogueado.id;
+          const resUser = await axios.get(`http://localhost:3000/api/v1/usuarios/${userId}`);
+          setDatosUsuarioHeader(resUser.data);
+        }
+
       } catch (err) { console.error("Error cargando datos", err); }
     };
     cargarDatos();
@@ -55,27 +71,22 @@ function DetalleReceta() {
   }, [id]); 
 
   const handleYummy = async () => {
-    // Restauramos la validación original: Si no hay usuario, bloqueamos
     if (!usuarioLogueado) {
-      return Swal.fire('¡Ups!', 'Si quieres dejar tu Yummy😋, inicia sesión o regístrate si aún no lo has hecho.', 'info');
+      return Swal.fire('¡Ups!', 'Si quieres dejar tu Yummy😋, inicia sesión o regístrate.', 'info');
     }
-
     setAnimarBeso(true);
     setTimeout(() => setAnimarBeso(false), 600); 
-
     try {
       const res = await axios.put(`http://localhost:3000/api/v1/recetas/${id}/yummy`, {
         userId: usuarioLogueado._id || usuarioLogueado.id
       });
       setYummysArray(res.data);
-    } catch (error) { 
-      console.error("Error Yummy"); 
-    }
+    } catch (error) { console.error("Error Yummy"); }
   };
+
   const handlePublicarComentario = async () => {
     if (!usuarioLogueado) return Swal.fire('¡Ups!', 'Inicia sesión para comentar.', 'info');
     if (nuevoComentario.trim() === "") return;
-
     try {
       const res = await axios.post(`http://localhost:3000/api/v1/recetas/${id}/comentarios`, {
         usuarioId: usuarioLogueado._id || usuarioLogueado.id,
@@ -89,7 +100,7 @@ function DetalleReceta() {
 
   const handleEliminarComentario = async (comentarioId) => {
     Swal.fire({
-      title: '¿Seguro?', text: "Se borrará este comentario y sus respuestas.", icon: 'warning',
+      title: '¿Seguro?', text: "Se borrará este comentario.", icon: 'warning',
       showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#888', confirmButtonText: 'Sí, borrar'
     }).then(async (result) => {
       if (result.isConfirmed) {
@@ -115,7 +126,6 @@ function DetalleReceta() {
     } catch (error) { console.error("Error respondiendo"); }
   };
 
-  // FUNCIÓN: Eliminar una respuesta
   const handleEliminarRespuesta = async (comentarioId, respuestaId) => {
     Swal.fire({
       title: '¿Borrar respuesta?', icon: 'warning', showCancelButton: true,
@@ -145,19 +155,25 @@ function DetalleReceta() {
             <img src={logoPng} alt="Logo Redetas" className="logo-image" />
           </Link>
           <nav className="nav-links">
-            <Link to="/">Inicio</Link> <Link to="/#">Recetas</Link> <Link to="/#">Comunidad</Link> <Link to="/#">Blog</Link>
-            {usuarioLogueado ? (
-              <>
-                <Link to="/mi-cuenta" style={{fontWeight: 'bold', color: '#D35400', fontSize: '18px'}}>Hola, {usuarioLogueado.username}</Link>
-                <button onClick={cerrarSesion} style={{marginLeft: '10px', background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: '14px'}}>(Salir)</button>
-              </>
-            ) : (
-              <Link to="/acceso" style={{fontWeight: 'bold', color: '#D35400', fontSize: '18px'}}>Entrar</Link>
-            )}
+            <Link to="/">Inicio</Link> <Link to="/#">Recetas</Link> <Link to="/#">Comunidad</Link>
           </nav>
           <div className="header-actions">
-            <input type="search" placeholder="Buscar recetas..." className="search-bar" style={{fontSize: '16px'}} />
-            <Link to="/nueva-receta" className="publish-button" style={{fontSize: '16px'}}>Publicar Receta</Link>
+            {/* Círculo de perfil y botón de cerrar sesión */}
+            {usuarioLogueado ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Link to="/mi-cuenta" style={{ width: '45px', height: '45px', borderRadius: '50%', backgroundColor: '#D35400', color: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'hidden', textDecoration: 'none' }}>
+                  {datosUsuarioHeader?.foto_perfil_url ? (
+                    <img src={`http://localhost:3000/uploads/${datosUsuarioHeader.foto_perfil_url}`} alt="Perfil" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <span style={{ fontWeight: 'bold' }}>{usuarioLogueado.username.charAt(0).toUpperCase()}</span>
+                  )}
+                </Link>
+                <button onClick={cerrarSesion} style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: '14px' }}>(Salir)</button>
+              </div>
+            ) : (
+              <Link to="/acceso" style={{fontWeight: 'bold', color: '#D35400', fontSize: '18px', textDecoration: 'none'}}>Entrar</Link>
+            )}
+            <Link to="/nueva-receta" className="publish-button" style={{fontSize: '16px', marginLeft: '15px'}}>Publicar Receta</Link>
           </div>
         </div>
       </header>
@@ -171,10 +187,17 @@ function DetalleReceta() {
               <img src={`http://localhost:3000/uploads/${receta.imagen}`} alt={receta.titulo} className="detalle-foto" />
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px', paddingBottom: '15px', borderBottom: '1px solid #eee' }}>
-                <Link to="#" onClick={(e) => { e.preventDefault(); proximoAviso(); }} style={{ textDecoration: 'none', color: '#333', display: 'flex', alignItems: 'center', gap: '15px' }}>
-                  <div style={{ width: '55px', height: '55px', borderRadius: '50%', backgroundColor: '#D35400', color: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', fontWeight: 'bold', fontSize: '24px' }}>
-                    {receta.nombreAutor ? receta.nombreAutor.charAt(0).toUpperCase() : 'U'}
+                <Link to={`/perfil/${receta.autor?._id || receta.autor}`} style={{ textDecoration: 'none', color: '#333', display: 'flex', alignItems: 'center', gap: '15px' }}>
+                  
+                  {/* Círculo con imagen del autor de la receta*/}
+                  <div style={{ width: '55px', height: '55px', borderRadius: '50%', backgroundColor: '#D35400', color: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', fontWeight: 'bold', fontSize: '24px', overflow: 'hidden' }}>
+                    {receta.autor?.foto_perfil_url ? (
+                      <img src={`http://localhost:3000/uploads/${receta.autor.foto_perfil_url}`} alt="Chef" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                      receta.nombreAutor ? receta.nombreAutor.charAt(0).toUpperCase() : 'U'
+                    )}
                   </div>
+
                   <div>
                     <span style={{ fontWeight: 'bold', fontSize: '22px', display: 'block' }}>{receta.nombreAutor}</span>
                     <span style={{ fontSize: '15px', color: '#888'}}>Chef de Redetas</span>
@@ -182,8 +205,8 @@ function DetalleReceta() {
                 </Link>
                 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '20px'}}>
-                   <div onClick={handleYummy} style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', userSelect: 'none', position: 'relative', fontSize: '30px' }} title={yaDiYummy ? 'Quitar Yummy' : '¡Dar Yummy!'}>
-                     <span className={animarBeso ? 'cara-besando' : ''} style={{ opacity: yaDiYummy ? 1 : 0.35, filter: yaDiYummy ? 'none' : 'grayscale(100%)', transition: 'opacity 0.3s, filter 0.3s', display: 'inline-block' }}>😋</span>
+                   <div onClick={handleYummy} style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', userSelect: 'none', position: 'relative', fontSize: '30px' }}>
+                     <span className={animarBeso ? 'cara-besando' : ''} style={{ opacity: yaDiYummy ? 1 : 0.35, filter: yaDiYummy ? 'none' : 'grayscale(100%)', display: 'inline-block' }}>😋</span>
                      {animarBeso && ( <span className="corazon-volador" style={{ position: 'absolute', left: '20px', top: '0px', fontSize: '26px' }}>❤️</span> )}
                      <span style={{ color: '#D35400', fontWeight: 'bold' }}>{yummysArray.length}</span>
                    </div>
@@ -192,82 +215,37 @@ function DetalleReceta() {
               </div>
 
               {/* COMENTARIOS */}
-              <h2 style={{color: '#333', borderTop: '1px solid #eee', paddingTop: '20px', marginTop: '20px', fontSize: '24px'}}>
-                💬 Comentarios ({comentarios.length})
-              </h2>
+              <h2 style={{color: '#333', borderTop: '1px solid #eee', paddingTop: '20px', marginTop: '20px', fontSize: '24px'}}>💬 Comentarios ({comentarios.length})</h2>
               
               <div style={{marginTop: '20px', marginBottom: '30px'}}>
-                <textarea 
-                  value={nuevoComentario}
-                  onChange={(e) => setNuevoComentario(e.target.value)}
-                  placeholder="Deja un comentario principal..." 
-                  style={{width: '100%', boxSizing: 'border-box', padding: '15px', borderRadius: '8px', border: '1px solid #ccc', marginBottom: '10px', resize: 'vertical', minHeight: '100px', fontSize: '18px'}}
-                ></textarea>
-                <button onClick={handlePublicarComentario} style={{padding: '15px 20px', backgroundColor: '#333', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', width: '100%', fontWeight: 'bold', fontSize: '18px'}}>
-                  Publicar Comentario
-                </button>
+                <textarea value={nuevoComentario} onChange={(e) => setNuevoComentario(e.target.value)} placeholder="Escribe un comentario..." style={{width: '100%', boxSizing: 'border-box', padding: '15px', borderRadius: '8px', border: '1px solid #ccc', marginBottom: '10px', fontSize: '18px', minHeight: '100px'}}></textarea>
+                <button onClick={handlePublicarComentario} style={{padding: '15px 20px', backgroundColor: '#333', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', width: '100%', fontWeight: 'bold', fontSize: '18px'}}>Publicar Comentario</button>
               </div>
 
               <div>
                 {comentarios.slice().reverse().map((com, index) => {
                   const esMiComentario = usuarioLogueado && (com.usuarioId === idUsuarioActual);
-                  const keySegura = com.id || `antiguo-${index}`;
-
                   return (
-                    <div key={keySegura} style={{marginBottom: '25px'}}>
+                    <div key={com.id || index} style={{marginBottom: '25px'}}>
                       <div className="comentario-caja">
                         <span style={{fontWeight: 'bold', color: '#D35400', display: 'block', marginBottom: '5px', fontSize: '18px'}}>{com.nombreUsuario}</span>
                         <span style={{fontSize: '18px', color: '#444'}}>{com.texto}</span>
-                        
                         {com.id && (
                           <div className="acciones-comentario">
-                            <button className="btn-accion-comentario" onClick={() => {
-                              if(!usuarioLogueado) return Swal.fire('¡Ups!', 'Inicia sesión para responder.', 'info');
-                              setComentarioAResponder(comentarioAResponder === com.id ? null : com.id);
-                              setTextoRespuesta("");
-                            }}>Responder</button>
-                            
-                            {esMiComentario && (
-                              <button className="btn-accion-comentario btn-borrar" onClick={() => handleEliminarComentario(com.id)}>Borrar</button>
-                            )}
+                            <button className="btn-accion-comentario" onClick={() => setComentarioAResponder(comentarioAResponder === com.id ? null : com.id)}>Responder</button>
+                            {esMiComentario && <button className="btn-accion-comentario btn-borrar" onClick={() => handleEliminarComentario(com.id)}>Borrar</button>}
                           </div>
                         )}
                       </div>
-
                       {comentarioAResponder === com.id && (
-                        <div className="caja-responder">
-                          <textarea 
-                            value={textoRespuesta}
-                            onChange={(e) => setTextoRespuesta(e.target.value)}
-                            placeholder={`Respondiendo a ${com.nombreUsuario}...`}
-                            style={{width: '100%', boxSizing: 'border-box', padding: '10px', borderRadius: '6px', border: '1px solid #ccc', resize: 'vertical', minHeight: '60px', fontSize: '16px'}}
-                          ></textarea>
-                          <div style={{display: 'flex', gap: '10px'}}>
-                            <button onClick={() => handleEnviarRespuesta(com.id)} style={{padding: '8px 15px', backgroundColor: '#D35400', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold'}}>Enviar</button>
-                            <button onClick={() => setComentarioAResponder(null)} style={{padding: '8px 15px', backgroundColor: '#eee', color: '#333', border: 'none', borderRadius: '5px', cursor: 'pointer'}}>Cancelar</button>
+                        <div className="caja-responder" style={{ marginTop: '10px' }}>
+                          <textarea value={textoRespuesta} onChange={(e) => setTextoRespuesta(e.target.value)} placeholder="Responde..." style={{width: '100%', boxSizing: 'border-box', padding: '10px', borderRadius: '6px', border: '1px solid #ccc', fontSize: '16px'}}></textarea>
+                          <div style={{display: 'flex', gap: '10px', marginTop: '5px'}}>
+                            <button onClick={() => handleEnviarRespuesta(com.id)} style={{padding: '8px 15px', backgroundColor: '#D35400', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer'}}>Enviar</button>
+                            <button onClick={() => setComentarioAResponder(null)} style={{padding: '8px 15px', backgroundColor: '#eee', border: 'none', borderRadius: '5px'}}>Cancelar</button>
                           </div>
                         </div>
                       )}
-
-                      {/* Las Respuestas con Botón de Borrar */}
-                      {com.respuestas && com.respuestas.map((resp, i) => {
-                        // Verificamos si tú escribiste esta respuesta
-                        const esMiRespuesta = usuarioLogueado && (resp.usuarioId === idUsuarioActual);
-                        
-                        return (
-                          <div key={resp.id || i} className="respuesta-caja">
-                            <span style={{fontWeight: 'bold', color: '#555', display: 'block', marginBottom: '5px', fontSize: '15px'}}>↳ {resp.nombreUsuario}</span>
-                            <span style={{fontSize: '16px', color: '#444'}}>{resp.texto}</span>
-                            
-                            {/* Botón borrar (Alineado a la derecha) */}
-                            {esMiRespuesta && resp.id && (
-                              <div className="acciones-respuesta">
-                                <button className="btn-borrar-respuesta" onClick={() => handleEliminarRespuesta(com.id, resp.id)}>Borrar</button>
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
                     </div>
                   );
                 })}
@@ -283,12 +261,12 @@ function DetalleReceta() {
                   </div>
                 ))}
               </div>
-              <h2 style={{color: '#D35400', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '26px'}}>🛒 Ingredientes</h2>
-              <div className="seccion-texto" style={{backgroundColor: '#FDF8F5', padding: '25px', borderRadius: '12px', borderLeft: '6px solid #D35400'}}>
+              <h2 style={{color: '#D35400', marginBottom: '20px', fontSize: '26px'}}>🛒 Ingredientes</h2>
+              <div className="seccion-texto" style={{backgroundColor: '#FDF8F5', padding: '25px', borderRadius: '12px', borderLeft: '6px solid #D35400', fontSize: '18px', whiteSpace: 'pre-wrap'}}>
                 {receta.ingredientes}
               </div>
-              <h2 style={{color: '#D35400', marginBottom: '20px', marginTop: '40px', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '26px'}}>👩‍🍳 Preparación</h2>
-              <div className="seccion-texto" style={{padding: '0 10px'}}>
+              <h2 style={{color: '#D35400', marginBottom: '20px', marginTop: '40px', fontSize: '26px'}}>👩‍🍳 Preparación</h2>
+              <div className="seccion-texto" style={{padding: '0 10px', fontSize: '18px', lineHeight: '1.6', whiteSpace: 'pre-wrap'}}>
                 {receta.instrucciones}
               </div>
             </div>
@@ -298,24 +276,18 @@ function DetalleReceta() {
 
         <aside className="detalle-sidebar">
           <h3 className="sidebar-titulo">Sigue descubriendo</h3>
-          {recetasSimilares.length > 0 ? (
-            recetasSimilares.map((sim) => (
-              <Link to={`/receta/${sim._id}`} key={sim._id} className="receta-similar-card">
-                <img src={`http://localhost:3000/uploads/${sim.imagen}`} alt={sim.titulo} className="similar-foto" />
-                <div className="similar-info">
-                  <h4 className="similar-titulo">{sim.titulo}</h4>
-                  <div className="similar-stats">
-                    <span style={{fontSize: '15px', color: '#888', fontWeight: 'bold'}}>Por {sim.nombreAutor}</span>
-                    <span style={{color: '#D35400', fontWeight: 'bold', fontSize: '18px'}}>{sim.yummys ? sim.yummys.length : 0} 😋</span>
-                  </div>
+          {recetasSimilares.map((sim) => (
+            <Link to={`/receta/${sim._id}`} key={sim._id} className="receta-similar-card">
+              <img src={`http://localhost:3000/uploads/${sim.imagen}`} alt={sim.titulo} className="similar-foto" />
+              <div className="similar-info">
+                <h4 className="similar-titulo">{sim.titulo}</h4>
+                <div className="similar-stats">
+                  <span style={{fontSize: '14px', color: '#888'}}>Por {sim.nombreAutor}</span>
                 </div>
-              </Link>
-            ))
-          ) : (
-            <p style={{fontSize: '16px', color: '#888'}}>No hay más recetas publicadas aún.</p>
-          )}
+              </div>
+            </Link>
+          ))}
         </aside>
-
       </main>
     </>
   );

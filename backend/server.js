@@ -28,6 +28,7 @@ const authRoutes = require('./routes/auth');   // Importa las rutas de autentica
 app.use(cors());          // Habilita CORS para permitir el acceso a la API desde cualquier origen y así evitar errores de seguridad.
 app.use(express.json());  // Habilita el uso de JSON en las solicitudes y respuestas, un formato comprensible por el servidor Node.js.
 app.use('/api/v1/auth', authRoutes);   // Utiliza las rutas de autenticación.
+app.use('/api/v1/usuarios', require('./routes/usuarios'));   // Utiliza las rutas de usuarios.
 
 // 1. Damos permiso para que las fotos de la carpeta 'uploads' se puedan ver en la web
 app.use('/uploads', express.static('uploads'));

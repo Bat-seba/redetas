@@ -23,6 +23,13 @@ const upload = multer({ storage: storage });
 // Esta es la ruta: Cuando React envíe datos a "/nueva", pasará por multer y luego al controlador
 router.post('/nueva', upload.single('imagen'), recetaController.crearReceta);
 
+// Ruta para ACTUALIZAR (Editar) una receta desde la pagina de MiCuenta
+router.put('/:id', upload.single('imagen'), recetaController.actualizarReceta);
+
+// Ruta para BORRAR una receta desde la pagina de MiCuenta
+router.delete('/:id', recetaController.eliminarReceta);
+
+
 // Ruta para leer todas las recetas (GET)
 router.get('/', recetaController.obtenerRecetas);
 

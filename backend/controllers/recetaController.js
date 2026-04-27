@@ -1,6 +1,10 @@
+// backend/controllers/recetaController.js sirve para crear nuevas recetas en la base de datos.
+
 const Receta = require('../models/Receta');
 
-// Función para crear una receta nueva
+// =========================================================================
+// 1. FUNCIÓN PARA CREAR UNA RECETA NUEVA
+// =========================================================================
 exports.crearReceta = async (req, res) => {
     try {
         const { titulo, ingredientes, instrucciones, categorias, autor, nombreAutor } = req.body;
@@ -10,7 +14,6 @@ exports.crearReceta = async (req, res) => {
             nombreImagen = req.file.filename; 
         }
 
-        // Se traduce  el texto que llega de React y se convierte  en un Array real
         let categoriasArray = [];
         if (categorias) {
             categoriasArray = JSON.parse(categorias); 
@@ -19,8 +22,8 @@ exports.crearReceta = async (req, res) => {
         const nuevaReceta = new Receta({
             titulo,
             ingredientes,
-            instrucciones,
-            categorias: categoriasArray, // Metemos el Array limpio en el molde
+            instructions: instrucciones, 
+            categorias: categoriasArray,
             autor,
             nombreAutor,
             imagen: nombreImagen
@@ -38,21 +41,32 @@ exports.crearReceta = async (req, res) => {
         res.status(500).json({ mensaje: 'Hubo un error en el servidor al guardar la receta.' });
     }
 };
-// Función para obtener todas las recetas y mostrarlas en el Inicio
+
+// =========================================================================
+// 2. FUNCIÓN PARA OBTENER TODAS LAS RECETAS (INICIO)
+// =========================================================================
 exports.obtenerRecetas = async (req, res) => {
     try {
-        // Buscamos todas las recetas y las ordenamos de la más nueva a la más antigua
-        const recetas = await Receta.find().sort({ fechaPublicacion: -1 });
+        // .populate busca en la tabla de Usuarios la foto del autor
+        const recetas = await Receta.find()
+            .populate('autor', 'foto_perfil_url') 
+            .sort({ fechaPublicacion: -1 });
+            
         res.status(200).json(recetas);
     } catch (error) {
         res.status(500).json({ mensaje: "Error al obtener las recetas" });
     }
 };
 
-// Función para obtener UNA SOLA receta por su ID
+// =========================================================================
+// 3. FUNCIÓN PARA OBTENER UNA SOLA RECETA POR SU ID (DETALLE)
+// =========================================================================
 exports.obtenerRecetaPorId = async (req, res) => {
     try {
-        const receta = await Receta.findById(req.params.id);
+        // .populate busca en la tabla de Usuarios la foto del autor y traemos la foto para la página de detalle
+        const receta = await Receta.findById(req.params.id)
+            .populate('autor', 'foto_perfil_url');
+
         if (!receta) return res.status(404).json({ mensaje: 'Receta no encontrada' });
         res.status(200).json(receta);
     } catch (error) {
@@ -60,22 +74,20 @@ exports.obtenerRecetaPorId = async (req, res) => {
     }
 };
 
-// Función para Dar/Quitar Yummy
+// =========================================================================
+// 4. FUNCIÓN PARA DAR/QUITAR YUMMY
+// =========================================================================
 exports.toggleYummy = async (req, res) => {
     try {
         const receta = await Receta.findById(req.params.id);
         const { userId } = req.body;
-        
-        // Si no existe el array, lo creamos por seguridad
         if (!receta.yummys) receta.yummys = [];
-
         const index = receta.yummys.indexOf(userId);
         if (index === -1) {
-            receta.yummys.push(userId); // Si no le había dado Yummy, se lo damos
+            receta.yummys.push(userId);
         } else {
-            receta.yummys.splice(index, 1); // Si ya le había dado, se lo quitamos
+            receta.yummys.splice(index, 1);
         }
-
         await receta.save();
         res.status(200).json(receta.yummys);
     } catch (error) {
@@ -83,21 +95,21 @@ exports.toggleYummy = async (req, res) => {
     }
 };
 
-// Función para publicar Comentario (ACTUALIZADA con ID y Respuestas)
+// =========================================================================
+// 5. GESTIÓN DE COMENTARIOS
+// =========================================================================
 exports.agregarComentario = async (req, res) => {
     try {
         const receta = await Receta.findById(req.params.id);
         if (!receta.comentarios) receta.comentarios = [];
-
         const nuevoComentario = {
-            id: Date.now().toString(), // Le damos un DNI único al comentario
+            id: Date.now().toString(),
             usuarioId: req.body.usuarioId,
             nombreUsuario: req.body.nombreUsuario,
             texto: req.body.texto,
             fecha: new Date(),
-            respuestas: [] // Se Prepara la caja para futuras respuestas
+            respuestas: []
         };
-
         receta.comentarios.push(nuevoComentario);
         await receta.save();
         res.status(201).json(receta.comentarios);
@@ -106,16 +118,10 @@ exports.agregarComentario = async (req, res) => {
     }
 };
 
-// Función para Eliminar tu propio comentario
 exports.eliminarComentario = async (req, res) => {
     try {
         const receta = await Receta.findById(req.params.id);
-        const { comentarioId } = req.params;
-
-        // Filtramos para quedarnos con todos MENOS el que queremos borrar
-        receta.comentarios = receta.comentarios.filter(c => c.id !== comentarioId);
-        
-        // Le decimos a la base de datos que este array ha sido modificado y guardamos
+        receta.comentarios = receta.comentarios.filter(c => c.id !== req.params.comentarioId);
         receta.markModified('comentarios');
         await receta.save();
         res.status(200).json(receta.comentarios);
@@ -124,60 +130,87 @@ exports.eliminarComentario = async (req, res) => {
     }
 };
 
-// Función para Responder a un comentario
 exports.responderComentario = async (req, res) => {
     try {
         const receta = await Receta.findById(req.params.id);
-        const { comentarioId } = req.params;
-
-        // Buscamos el comentario original al que estamos respondiendo
-        const comentarioIndex = receta.comentarios.findIndex(c => c.id === comentarioId);
-        
+        const comentarioIndex = receta.comentarios.findIndex(c => c.id === req.params.comentarioId);
         if (comentarioIndex !== -1) {
-            const nuevaRespuesta = {
-                id: Date.now().toString(),
-                usuarioId: req.body.usuarioId,
-                nombreUsuario: req.body.nombreUsuario,
-                texto: req.body.texto,
-                fecha: new Date()
-            };
-            
-            // Si el comentario es antiguo y no tenía array de respuestas, se lo creamos
-            if (!receta.comentarios[comentarioIndex].respuestas) {
-                receta.comentarios[comentarioIndex].respuestas = [];
-            }
-            
+            const nuevaRespuesta = { id: Date.now().toString(), usuarioId: req.body.usuarioId, nombreUsuario: req.body.nombreUsuario, texto: req.body.texto, fecha: new Date() };
+            if (!receta.comentarios[comentarioIndex].respuestas) receta.comentarios[comentarioIndex].respuestas = [];
             receta.comentarios[comentarioIndex].respuestas.push(nuevaRespuesta);
             receta.markModified('comentarios');
             await receta.save();
         }
-
         res.status(201).json(receta.comentarios);
     } catch (error) {
         res.status(500).json({ mensaje: "Error al responder comentario" });
     }
 };
 
-// Función para Eliminar una RESPUESTA específica
 exports.eliminarRespuesta = async (req, res) => {
     try {
         const receta = await Receta.findById(req.params.id);
-        const { comentarioId, respuestaId } = req.params;
-
-        // 1. Buscamos el comentario principal
-        const comentarioIndex = receta.comentarios.findIndex(c => c.id === comentarioId);
-        
-        if (comentarioIndex !== -1 && receta.comentarios[comentarioIndex].respuestas) {
-            // 2. Filtramos para borrar solo la respuesta que queremos
-            receta.comentarios[comentarioIndex].respuestas = receta.comentarios[comentarioIndex].respuestas.filter(r => r.id !== respuestaId);
-            
-            // 3. Guardamos los cambios
+        const comentarioIndex = receta.comentarios.findIndex(c => c.id === req.params.comentarioId);
+        if (comentarioIndex !== -1) {
+            receta.comentarios[comentarioIndex].respuestas = receta.comentarios[comentarioIndex].respuestas.filter(r => r.id !== req.params.respuestaId);
             receta.markModified('comentarios');
             await receta.save();
         }
-
         res.status(200).json(receta.comentarios);
     } catch (error) {
         res.status(500).json({ mensaje: "Error al eliminar respuesta" });
+    }
+};
+
+// =========================================================================
+// 6. FUNCIONES DEL CRUD (EDITAR Y BORRAR RECETAS)
+// =========================================================================
+
+exports.actualizarReceta = async (req, res) => {
+    try {
+        const { titulo, ingredientes, instrucciones, categorias } = req.body;
+        const recetaId = req.params.id;
+
+        let categoriasArray = [];
+        if (categorias) {
+            if (Array.isArray(categorias)) {
+                categoriasArray = categorias;
+            } else {
+                try { categoriasArray = JSON.parse(categorias); } catch (e) { categoriasArray = [categorias]; }
+            }
+        }
+
+        const datosActualizados = { titulo, ingredientes, instrucciones, categorias: categoriasArray };
+
+        if (req.file) {
+            datosActualizados.imagen = req.file.filename;
+        }
+
+        // Se agrega el autor al actualizar para que el frontend reciba la foto del autor de la receta actualizada.
+        const recetaActualizada = await Receta.findByIdAndUpdate(
+            recetaId,
+            datosActualizados,
+            { new: true } 
+        ).populate('autor', 'foto_perfil_url');
+
+        if (!recetaActualizada) {
+            return res.status(404).json({ mensaje: 'Receta no encontrada' });
+        }
+
+        res.status(200).json({ mensaje: 'Receta actualizada con éxito', receta: recetaActualizada });
+
+    } catch (error) {
+        console.error("Error al actualizar la receta:", error);
+        res.status(500).json({ mensaje: 'Hubo un error en el servidor.' });
+    }
+};
+
+exports.eliminarReceta = async (req, res) => {
+    try {
+        const recetaEliminada = await Receta.findByIdAndDelete(req.params.id);
+        if (!recetaEliminada) return res.status(404).json({ mensaje: 'Receta no encontrada' });
+        res.status(200).json({ mensaje: 'Receta eliminada correctamente' });
+    } catch (error) {
+        res.status(500).json({ mensaje: 'Hubo un error al borrar la receta.' });
     }
 };

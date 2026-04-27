@@ -6,6 +6,7 @@ import Inicio from './pages/Inicio';
 import Acceso from './pages/Acceso';
 import EditorReceta from './pages/EditorReceta';
 import DetalleReceta from './pages/DetalleReceta';
+import MiCuenta from './pages/MiCuenta';   
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         {/* 2. Cuando vayamos a /nueva-receta, mostramos el EditorReceta */}
         <Route path="/nueva-receta" element={<EditorReceta />} />
         <Route path="/receta/:id" element={<DetalleReceta />} /> 
+        <Route path="/mi-cuenta" element={<MiCuenta />} />
       </Routes>
     </Router>
   );
