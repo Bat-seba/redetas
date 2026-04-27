@@ -217,7 +217,9 @@ function Inicio() {
                 </Link>
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px', paddingBottom: '10px', borderBottom: '1px solid #eee' }}>
-                  <Link to={`/perfil/${receta.autor?._id || receta.autor}`} style={{ textDecoration: 'none', color: '#333', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  
+                  {/* Autor de la receta */}
+                  <Link to={`/usuario/${receta.autor?._id || receta.autor}`} style={{ textDecoration: 'none', color: '#D35400', display: 'flex', alignItems: 'center', gap: '10px' }}>
                     
                     {/* Círculo con imagen del autor de la receta */}
                     <div style={{ width: '35px', height: '35px', borderRadius: '50%', backgroundColor: '#D35400', color: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', fontWeight: 'bold', fontSize: '18px', overflow: 'hidden' }}>
@@ -230,6 +232,7 @@ function Inicio() {
 
                     <span style={{ fontWeight: 'bold', fontSize: '16px' }}>{receta.nombreAutor}</span>
                   </Link>
+
                   <div style={{ color: '#D35400', fontWeight: 'bold', fontSize: '18px' }}>
                     {Array.isArray(receta.yummys) ? receta.yummys.length : 0} 😋
                   </div>

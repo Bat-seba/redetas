@@ -8,6 +8,7 @@ import EditorReceta from './pages/EditorReceta';
 import DetalleReceta from './pages/DetalleReceta';
 import MiCuenta from './pages/MiCuenta';   
 import FavoritosGuardados from './pages/FavoritosGuardados';
+import PerfilPublico from './pages/PerfilPublico';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/receta/:id" element={<DetalleReceta />} /> 
         <Route path="/mi-cuenta" element={<MiCuenta />} />
         <Route path="/mis-favoritos" element={<FavoritosGuardados />} />
+        <Route path="/usuario/:id" element={<PerfilPublico />} />
       </Routes>
     </Router>
   );

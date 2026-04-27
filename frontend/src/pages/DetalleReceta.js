@@ -239,7 +239,11 @@ function DetalleReceta() {
               <img src={`http://localhost:3000/uploads/${receta.imagen}`} alt={receta.titulo} className="detalle-foto" />
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px', paddingBottom: '15px', borderBottom: '1px solid #eee' }}>
-                <Link to={`/perfil/${receta.autor?._id || receta.autor}`} style={{ textDecoration: 'none', color: '#333', display: 'flex', alignItems: 'center', gap: '15px' }}>
+                
+                {/* BLOQUE DEL AUTOR (Foto y Nombre, todo hace clic a la misma ruta) */}
+                <Link to={`/usuario/${receta.autor?._id || receta.autor}`} style={{ textDecoration: 'none', color: '#333', display: 'flex', alignItems: 'center', gap: '15px' }}>
+                  
+                  {/* Foto de perfil redonda */}
                   <div style={{ width: '55px', height: '55px', borderRadius: '50%', backgroundColor: '#D35400', color: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', fontWeight: 'bold', fontSize: '24px', overflow: 'hidden' }}>
                     {receta.autor?.foto_perfil_url ? (
                       <img src={`http://localhost:3000/uploads/${receta.autor.foto_perfil_url}`} alt="Chef" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -247,12 +251,21 @@ function DetalleReceta() {
                       receta.nombreAutor ? receta.nombreAutor.charAt(0).toUpperCase() : 'U'
                     )}
                   </div>
+                  
+                  {/* Textos del autor */}
                   <div>
-                    <span style={{ fontWeight: 'bold', fontSize: '22px', display: 'block' }}>{receta.nombreAutor}</span>
+                    <p style={{ fontSize: '18px', color: '#666', margin: '0 0 5px 0' }}>
+                      Receta de:{' '}
+                      <span style={{ color: '#D35400', fontWeight: 'bold' }}>
+                        {receta.nombreAutor}
+                      </span>
+                    </p>
                     <span style={{ fontSize: '15px', color: '#888'}}>Chef de Redetas</span>
                   </div>
+
                 </Link>
                 
+                {/* Bloque de Yummys y Favoritos */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '20px'}}>
                    <div onClick={handleYummy} style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', userSelect: 'none', position: 'relative', fontSize: '30px' }}>
                      <span className={animarBeso ? 'cara-besando' : ''} style={{ opacity: yaDiYummy ? 1 : 0.35, filter: yaDiYummy ? 'none' : 'grayscale(100%)', display: 'inline-block' }}>😋</span>
