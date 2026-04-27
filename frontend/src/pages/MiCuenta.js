@@ -234,11 +234,27 @@ function MiCuenta() {
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', backgroundColor: '#fdf8f5', padding: '20px', borderRadius: '15px' }}>
+  
+        {/* El buscador que ya tenías */}
         <div style={{ position: 'relative', width: '50%', display: 'flex', alignItems: 'center' }}>
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', left: '15px', pointerEvents: 'none' }}><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           <input type="text" placeholder="Buscar en tus publicaciones..." style={{ width: '100%', padding: '12px 12px 12px 45px', borderRadius: '10px', fontSize: '16px', border: '1px solid #ccc', outline: 'none' }} value={textoBusquedaLocal} onChange={(e) => setTextoBusquedaLocal(e.target.value)} />
         </div>
-        <a href="/nueva-receta" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', backgroundColor: 'var(--naranja-fuerte)', color: 'white', padding: '12px 30px', borderRadius: '30px', fontWeight: 'bold', fontSize: '16px', boxShadow: '0 4px 10px rgba(234, 88, 12, 0.3)' }}>+ CREAR NUEVA ↗</a>
+
+        {/* LOS DOS BOTONES JUNTOS */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          
+          {/* Botón Favoritos (Idéntico al de DetalleReceta) */}
+          <Link to="/mis-favoritos" className="boton-favorito" style={{ textDecoration: 'none' }}>
+            ⭐ FAVORITOS GUARDADOS
+          </Link>
+
+          {/* Tu botón de Crear Nueva */}
+          <a href="/nueva-receta" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', backgroundColor: 'var(--naranja-fuerte)', color: 'white', padding: '12px 30px', borderRadius: '30px', fontWeight: 'bold', fontSize: '16px', boxShadow: '0 4px 10px rgba(234, 88, 12, 0.3)' }}>
+            + CREAR NUEVA ↗
+          </a>
+          
+        </div>
       </div>
 
       <div style={{ backgroundColor: 'white', borderRadius: '15px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', overflow: 'hidden' }}>

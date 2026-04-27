@@ -1,10 +1,10 @@
 // ==========================================================================================================================================
 // ARCHIVO: DetalleReceta.js 
-// 🔹 Detalle de una receta.
+// 🔹 Detalle de una receta con Header limpio (sin buscador).
 // ==========================================================================================================================================
 
-import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react'; 
+import { useParams, Link, useNavigate } from 'react-router-dom'; 
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import logoPng from '../components/logo.png'; 
@@ -19,56 +19,65 @@ import iconoSinHuevo from '../components/iconos/icono_sin_huevo.png';
 import iconoSinLeche from '../components/iconos/icono_sin_leche.png';
 
 function DetalleReceta() {
-  const { id } = useParams();    // Para obtener el id de la receta
-  const usuarioLogueado = JSON.parse(localStorage.getItem('usuarioRedetas'));  // Para saber si el usuario esta logueado
-  
-  const [receta, setReceta] = useState(null);    //  Para mostrar la receta
-  const [recetasSimilares, setRecetasSimilares] = useState([]);   // Para mostrar recetas similares
-  
-  const [yummysArray, setYummysArray] = useState([]);    // Para mostrar los yummys
-  const [animarBeso, setAnimarBeso] = useState(false);     // Para animar el beso
-  const [comentarios, setComentarios] = useState([]);    // Para mostrar los comentarios
-  const [nuevoComentario, setNuevoComentario] = useState("");   // Para publicar un comentario
-  
-  const [comentarioAResponder, setComentarioAResponder] = useState(null);    // Para responder a un comentario
-  const [textoRespuesta, setTextoRespuesta] = useState("");    // Para responder a un comentario
-  const [datosUsuarioHeader, setDatosUsuarioHeader] = useState(null);   // Foto del usuario logueado actualizada en el header
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const usuarioLogueado = JSON.parse(localStorage.getItem('usuarioRedetas'));
+  const idUsuarioActual = usuarioLogueado ? (usuarioLogueado._id || usuarioLogueado.id) : null;
+
+  const [receta, setReceta] = useState(null);
+  const [recetasSimilares, setRecetasSimilares] = useState([]);
+  const [yummysArray, setYummysArray] = useState([]);
+  const [animarBeso, setAnimarBeso] = useState(false); 
+  const [comentarios, setComentarios] = useState([]);
+  const [nuevoComentario, setNuevoComentario] = useState("");
+  const [comentarioAResponder, setComentarioAResponder] = useState(null);
+  const [textoRespuesta, setTextoRespuesta] = useState("");
+
+  const [datosUsuarioHeader, setDatosUsuarioHeader] = useState(null);
+  const [menuPerfilAbierto, setMenuPerfilAbierto] = useState(false);
+  const perfilRef = useRef(null);
 
   const mapaIconos = {
     "Sin gluten": iconoSinGluten, "Sin huevo": iconoSinHuevo, "Sin leche": iconoSinLeche,
     "Sin azúcar": iconoSinAzucar, "Sin harinas": iconoSinHarinas, "Sin frutos secos": iconoSinFrutosSecos
   };
 
+  useEffect(() => {
+    const gestionarClicFuera = (evento) => {
+      if (perfilRef.current && !perfilRef.current.contains(evento.target)) {
+        setMenuPerfilAbierto(false);
+      }
+    };
+    document.addEventListener('mousedown', gestionarClicFuera);
+    return () => { document.removeEventListener('mousedown', gestionarClicFuera); };
+  }, []);
+
   const cerrarSesion = () => {
-    localStorage.removeItem('usuarioRedetas'); window.location.href = '/'; 
+    localStorage.removeItem('usuarioRedetas');
+    window.location.href = '/'; 
   };
 
   useEffect(() => {
     const cargarDatos = async () => {
       try {
-        // 1. Se carga la receta 
         const resReceta = await axios.get(`http://localhost:3000/api/v1/recetas/${id}`);
         setReceta(resReceta.data);
         setYummysArray(resReceta.data.yummys || []);
         setComentarios(resReceta.data.comentarios || []);
 
-        // 2. Se cargan recetas similares
         const resSimilares = await axios.get('http://localhost:3000/api/v1/recetas');
         const filtradas = resSimilares.data.filter(r => r._id !== id).slice(0, 4); 
         setRecetasSimilares(filtradas);
 
-        // 3. Se cargan los datos del usuario logueado para el header
         if (usuarioLogueado) {
-          const userId = usuarioLogueado._id || usuarioLogueado.id;
-          const resUser = await axios.get(`http://localhost:3000/api/v1/usuarios/${userId}`);
+          const resUser = await axios.get(`http://localhost:3000/api/v1/usuarios/${idUsuarioActual}`);
           setDatosUsuarioHeader(resUser.data);
         }
-
       } catch (err) { console.error("Error cargando datos", err); }
     };
     cargarDatos();
     window.scrollTo(0, 0);
-  }, [id]); 
+  }, [id, idUsuarioActual]); 
 
   const handleYummy = async () => {
     if (!usuarioLogueado) {
@@ -77,9 +86,7 @@ function DetalleReceta() {
     setAnimarBeso(true);
     setTimeout(() => setAnimarBeso(false), 600); 
     try {
-      const res = await axios.put(`http://localhost:3000/api/v1/recetas/${id}/yummy`, {
-        userId: usuarioLogueado._id || usuarioLogueado.id
-      });
+      const res = await axios.put(`http://localhost:3000/api/v1/recetas/${id}/yummy`, { userId: idUsuarioActual });
       setYummysArray(res.data);
     } catch (error) { console.error("Error Yummy"); }
   };
@@ -89,13 +96,23 @@ function DetalleReceta() {
     if (nuevoComentario.trim() === "") return;
     try {
       const res = await axios.post(`http://localhost:3000/api/v1/recetas/${id}/comentarios`, {
-        usuarioId: usuarioLogueado._id || usuarioLogueado.id,
-        nombreUsuario: usuarioLogueado.username,
-        texto: nuevoComentario
+        usuarioId: idUsuarioActual, nombreUsuario: usuarioLogueado.username, texto: nuevoComentario
       });
       setComentarios(res.data);
       setNuevoComentario(""); 
     } catch (error) { console.error("Error publicando"); }
+  };
+
+  const handleEnviarRespuesta = async (comentarioId) => {
+    if (textoRespuesta.trim() === "") return;
+    try {
+      const res = await axios.post(`http://localhost:3000/api/v1/recetas/${id}/comentarios/${comentarioId}/respuestas`, {
+        usuarioId: idUsuarioActual, nombreUsuario: usuarioLogueado.username, texto: textoRespuesta
+      });
+      setComentarios(res.data);
+      setComentarioAResponder(null); 
+      setTextoRespuesta(""); 
+    } catch (error) { console.error("Error respondiendo"); }
   };
 
   const handleEliminarComentario = async (comentarioId) => {
@@ -110,20 +127,6 @@ function DetalleReceta() {
         } catch (error) { console.error("Error eliminar"); }
       }
     });
-  };
-
-  const handleEnviarRespuesta = async (comentarioId) => {
-    if (textoRespuesta.trim() === "") return;
-    try {
-      const res = await axios.post(`http://localhost:3000/api/v1/recetas/${id}/comentarios/${comentarioId}/respuestas`, {
-        usuarioId: usuarioLogueado._id || usuarioLogueado.id,
-        nombreUsuario: usuarioLogueado.username,
-        texto: textoRespuesta
-      });
-      setComentarios(res.data);
-      setComentarioAResponder(null); 
-      setTextoRespuesta(""); 
-    } catch (error) { console.error("Error respondiendo"); }
   };
 
   const handleEliminarRespuesta = async (comentarioId, respuestaId) => {
@@ -142,9 +145,40 @@ function DetalleReceta() {
 
   const proximoAviso = () => Swal.fire('¡Próximamente!', 'Función disponible pronto.', 'info');
 
+  // FUNCIONES DE GUARDAR RECETAS FAVORITAS
+  const handleGuardarReceta = async () => {
+    if (!usuarioLogueado) {
+      return Swal.fire('¡Oye!', 'Inicia sesión para guardar esta receta.', 'info');
+    }
+
+    try {
+      // 1. Obtenemos tu ID de usuario
+      const userId = usuarioLogueado._id || usuarioLogueado.id;
+      
+      // 2. Enviamos la petición al servidor
+      // id es el que sacamos de useParams() arriba del todo
+      const res = await axios.put(`http://localhost:3000/api/v1/usuarios/${userId}/guardar`, {
+        recetaId: id 
+      });
+
+      console.log("Respuesta del servidor:", res.data); // Esto nos dirá en la consola si funcionó
+
+      if (res.status === 200) {
+        Swal.fire({
+          title: res.data.guardada ? '¡Añadida a favoritos! ⭐' : 'Quitada de favoritos',
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false
+        });
+      }
+    } catch (error) {
+      console.error("Error al guardar:", error.response?.data || error.message);
+      Swal.fire('Error', 'No se pudo guardar la receta.', 'error');
+    }
+  };
+
   if (!receta) return <div style={{textAlign: 'center', marginTop: '50px'}}><h2>Cargando... ⏳</h2></div>;
 
-  const idUsuarioActual = usuarioLogueado ? (usuarioLogueado._id || usuarioLogueado.id) : null;
   const yaDiYummy = yummysArray.includes(idUsuarioActual);
 
   return (
@@ -154,26 +188,45 @@ function DetalleReceta() {
           <Link to="/" className="logo-container">
             <img src={logoPng} alt="Logo Redetas" className="logo-image" />
           </Link>
+          
           <nav className="nav-links">
-            <Link to="/">Inicio</Link> <Link to="/#">Recetas</Link> <Link to="/#">Comunidad</Link>
+            <Link to="/">Inicio</Link>
+            <Link to="/#">Recetas</Link>
+            <Link to="/#">Comunidad</Link>
           </nav>
+          
           <div className="header-actions">
-            {/* Círculo de perfil y botón de cerrar sesión */}
+            
+
+            <Link to="/nueva-receta" className="publish-button">Publicar Receta</Link>
+
             {usuarioLogueado ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Link to="/mi-cuenta" style={{ width: '45px', height: '45px', borderRadius: '50%', backgroundColor: '#D35400', color: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'hidden', textDecoration: 'none' }}>
+              <div ref={perfilRef} style={{ position: 'relative', marginLeft: '10px' }}>
+                <div 
+                  onClick={() => setMenuPerfilAbierto(!menuPerfilAbierto)} 
+                  style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: 'var(--naranja-fuerte)', color: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '22px', fontWeight: 'bold', cursor: 'pointer', border: '2px solid white', overflow: 'hidden' }}
+                >
                   {datosUsuarioHeader?.foto_perfil_url ? (
-                    <img src={`http://localhost:3000/uploads/${datosUsuarioHeader.foto_perfil_url}`} alt="Perfil" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={`http://localhost:3000/uploads/${datosUsuarioHeader.foto_perfil_url}`} alt="Mí perfil" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : (
-                    <span style={{ fontWeight: 'bold' }}>{usuarioLogueado.username.charAt(0).toUpperCase()}</span>
+                    usuarioLogueado.username.charAt(0).toUpperCase()
                   )}
-                </Link>
-                <button onClick={cerrarSesion} style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: '14px' }}>(Salir)</button>
+                </div>
+
+                {menuPerfilAbierto && (
+                  <div style={{ position: 'absolute', top: '70px', right: '0', backgroundColor: 'white', border: '1px solid #E6DED7', borderRadius: '15px', padding: '10px', boxShadow: '0 8px 24px rgba(0,0,0,0.1)', zIndex: 100, width: '200px', display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                    <div style={{ padding: '10px', borderBottom: '1px solid #eee', marginBottom: '5px' }}>
+                      <span style={{ fontSize: '12px', color: '#888' }}>Conectado como</span>
+                      <br/><strong style={{ color: 'var(--gris-texto)' }}>{usuarioLogueado.username}</strong>
+                    </div>
+                    <Link to="/mi-cuenta" style={{ textDecoration: 'none', color: 'var(--gris-texto)', padding: '8px 10px', borderRadius: '8px', display: 'block' }}>👤 Mi Cuenta / Panel</Link>
+                    <button onClick={cerrarSesion} style={{ width: '100%', textAlign: 'left', background: 'none', border: 'none', borderTop: '1px solid #eee', paddingTop: '10px', marginTop: '5px', color: '#D93025', cursor: 'pointer', fontWeight: 'bold' }}>🚪 Cerrar sesión</button>
+                  </div>
+                )}
               </div>
             ) : (
-              <Link to="/acceso" style={{fontWeight: 'bold', color: '#D35400', fontSize: '18px', textDecoration: 'none'}}>Entrar</Link>
+              <Link to="/acceso" style={{ fontWeight: 'bold', color: 'var(--naranja-fuerte)', fontSize: '20px', textDecoration: 'none', marginLeft: '15px' }}>Entrar</Link>
             )}
-            <Link to="/nueva-receta" className="publish-button" style={{fontSize: '16px', marginLeft: '15px'}}>Publicar Receta</Link>
           </div>
         </div>
       </header>
@@ -182,14 +235,11 @@ function DetalleReceta() {
         <div className="detalle-principal">
           <h1 className="detalle-titulo">{receta.titulo}</h1>
           <div className="receta-cuerpo-grid">
-            
             <div>
               <img src={`http://localhost:3000/uploads/${receta.imagen}`} alt={receta.titulo} className="detalle-foto" />
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px', paddingBottom: '15px', borderBottom: '1px solid #eee' }}>
                 <Link to={`/perfil/${receta.autor?._id || receta.autor}`} style={{ textDecoration: 'none', color: '#333', display: 'flex', alignItems: 'center', gap: '15px' }}>
-                  
-                  {/* Círculo con imagen del autor de la receta*/}
                   <div style={{ width: '55px', height: '55px', borderRadius: '50%', backgroundColor: '#D35400', color: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', fontWeight: 'bold', fontSize: '24px', overflow: 'hidden' }}>
                     {receta.autor?.foto_perfil_url ? (
                       <img src={`http://localhost:3000/uploads/${receta.autor.foto_perfil_url}`} alt="Chef" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -197,7 +247,6 @@ function DetalleReceta() {
                       receta.nombreAutor ? receta.nombreAutor.charAt(0).toUpperCase() : 'U'
                     )}
                   </div>
-
                   <div>
                     <span style={{ fontWeight: 'bold', fontSize: '22px', display: 'block' }}>{receta.nombreAutor}</span>
                     <span style={{ fontSize: '15px', color: '#888'}}>Chef de Redetas</span>
@@ -210,7 +259,7 @@ function DetalleReceta() {
                      {animarBeso && ( <span className="corazon-volador" style={{ position: 'absolute', left: '20px', top: '0px', fontSize: '26px' }}>❤️</span> )}
                      <span style={{ color: '#D35400', fontWeight: 'bold' }}>{yummysArray.length}</span>
                    </div>
-                   <button className="boton-favorito" onClick={proximoAviso}>⭐ Guardar</button>
+                   <button className="boton-favorito" onClick={handleGuardarReceta}>⭐ Guardar</button>
                 </div>
               </div>
 
@@ -270,7 +319,6 @@ function DetalleReceta() {
                 {receta.instrucciones}
               </div>
             </div>
-
           </div>
         </div>
 

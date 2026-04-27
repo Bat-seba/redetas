@@ -17,9 +17,13 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-//  multer espera el campo 'foto_perfil_url'
+// 1. Actualizar perfil
 router.put('/:id', upload.single('foto_perfil_url'), usuarioController.actualizarPerfil);
 
-router.get('/:id', usuarioController.obtenerUsuario);
+// 2. Obtener perfil
+router.get('/:id', usuarioController.obtenerUsuarioPorId);
+
+// 3. Guardar/Quitar Favoritos
+router.put('/:id/guardar', usuarioController.toggleGuardarReceta);
 
 module.exports = router;

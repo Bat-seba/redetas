@@ -191,9 +191,33 @@
   border-color: var(--naranja-fuerte);
   width: 880px; /* Aumentado de 680px a 780px para mantener el efecto de expansión */
 }
-  .publish-button {
+
+.publish-button {
     width: 100%; 
     box-sizing: border-box;
     text-align: center;
-  }
+}
+
+/* Estilo del botón Guardar / Favoritos */
+.boton-favorito {
+  background-color: white;
+  color: #D35400;
+  border: 2px solid #D35400;
+  padding: 8px 25px;
+  border-radius: 25px; /* Forma de píldora */
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease; /* Para que el cambio de color sea suave */
+}
+
+/* Efecto al pasar por encima (Hover) */
+.boton-favorito:hover {
+  background-color: #D35400;
+  color: white;
+}
+
 }

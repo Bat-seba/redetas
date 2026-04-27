@@ -22,7 +22,7 @@ exports.crearReceta = async (req, res) => {
         const nuevaReceta = new Receta({
             titulo,
             ingredientes,
-            instructions: instrucciones, 
+            instrucciones, 
             categorias: categoriasArray,
             autor,
             nombreAutor,
