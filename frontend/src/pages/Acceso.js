@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../App.css'; 
 import axios from 'axios';  
-import { useNavigate } from 'react-router-dom';  
+import { useNavigate, Link } from 'react-router-dom';  
 import Swal from 'sweetalert2'; // Importamos la magia de SweetAlert2
 
 function Acceso() {
@@ -82,14 +82,17 @@ function Acceso() {
     }
   };
 
+  // FORMULARIO DE ACCESO Y REGISTRO
   return (
-    <div className="acceso-container" style={{ textAlign: 'center', marginTop: '50px' }}>
-      <h2>{isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}</h2>
+    <div className="acceso-container" style={{ textAlign: 'center', marginTop: '60px', marginBottom: '80px' }}>
+      <h2 style={{ fontSize: '36px', color: '#333', marginBottom: '30px' }}>
+        {isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}
+      </h2>
       
-      <form onSubmit={handleSubmit} style={{ maxWidth: '300px', margin: '0 auto' }}>
+      <form onSubmit={handleSubmit} style={{ maxWidth: '450px', margin: '0 auto', backgroundColor: '#ffffff', padding: '40px', borderRadius: '15px', boxShadow: '0 8px 30px rgba(0,0,0,0.08)' }}>
         
         {!isLogin && (
-          <div style={{ marginBottom: '15px' }}>
+          <div style={{ marginBottom: '20px' }}>
             <input 
               type="text" 
               name="username" 
@@ -97,12 +100,12 @@ function Acceso() {
               value={formData.username}
               onChange={handleChange}
               required 
-              style={{ width: '100%', padding: '10px' }}
+              style={{ width: '100%', padding: '15px', fontSize: '18px', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box' }}
             />
           </div>
         )}
 
-        <div style={{ marginBottom: '15px' }}>
+        <div style={{ marginBottom: '20px' }}>
           <input 
             type="email" 
             name="email" 
@@ -110,11 +113,11 @@ function Acceso() {
             value={formData.email}
             onChange={handleChange}
             required 
-            style={{ width: '100%', padding: '10px' }}
+            style={{ width: '100%', padding: '15px', fontSize: '18px', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box' }}
           />
         </div>
 
-        <div style={{ marginBottom: '15px' }}>
+        <div style={{ marginBottom: '30px' }}>
           <input 
             type="password" 
             name="password" 
@@ -122,19 +125,19 @@ function Acceso() {
             value={formData.password}
             onChange={handleChange}
             required 
-            style={{ width: '100%', padding: '10px' }}
+            style={{ width: '100%', padding: '15px', fontSize: '18px', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box' }}
           />
         </div>
 
         <button 
           type="submit" 
-          style={{ width: '100%', padding: '12px', backgroundColor: '#D35400', color: 'white', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}
+          style={{ width: '100%', padding: '15px', backgroundColor: '#D35400', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '20px' }}
         >
           {isLogin ? 'Entrar' : 'Registrarse'}
         </button>
       </form>
 
-      <div style={{ marginTop: '20px' }}>
+      <div style={{ marginTop: '30px', fontSize: '18px' }}>
         <p>
           {isLogin ? '¿No tienes una cuenta? ' : '¿Ya tienes cuenta? '}
           <span 
@@ -144,6 +147,28 @@ function Acceso() {
             {isLogin ? 'REGÍSTRATE AHORA' : 'INICIA SESIÓN'}
           </span>
         </p>
+      </div>
+
+      {/* BOTÓN DE REGRESO A PÁGINA PRINCIPAL DE INICIO */}
+      <div style={{ marginTop: '50px' }}>
+        <Link 
+          to="/" 
+          style={{ 
+            color: '#888', 
+            textDecoration: 'none', 
+            fontWeight: 'bold', 
+            fontSize: '18px', 
+            border: '2px solid #eee', 
+            padding: '12px 30px', 
+            borderRadius: '30px', 
+            display: 'inline-block',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseOver={(e) => e.target.style.backgroundColor = '#f9f9f9'}
+          onMouseOut={(e) => e.target.style.backgroundColor = 'transparent'}
+        >
+          ⬅ Seguir viendo recetas sin entrar
+        </Link>
       </div>
     </div>
   );

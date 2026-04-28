@@ -11,7 +11,8 @@ import FavoritosGuardados from './pages/FavoritosGuardados';
 import PerfilPublico from './pages/PerfilPublico';
 import Configuracion from './pages/Configuracion';
 import AdminPanel from './pages/AdminPanel';
-
+import MasPopulares from './pages/MasPopulares';
+import SobreRedetas from './pages/SobreRedetas';
 
 function App() {
   return (
@@ -27,6 +28,8 @@ function App() {
         <Route path="/usuario/:id" element={<PerfilPublico />} />
         <Route path="/configuracion" element={<Configuracion />} />
         <Route path="/admin" element={<AdminPanel />} />
+        <Route path="/mas-populares" element={<MasPopulares />} />
+        <Route path="/sobre-redetas" element={<SobreRedetas />} />
       </Routes>
     </Router>
   );

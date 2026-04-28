@@ -111,8 +111,8 @@ function Inicio() {
           
           <nav className="nav-links">
             <Link to="/">Inicio</Link>  
-            <Link to="/#">Más populares</Link> 
-            <Link to="/#">Blog</Link>
+            <Link to="/mas-populares">Más populares</Link> 
+            <Link to="/sobre-redetas">Sobre Redetas</Link>
           </nav>
           
           <div className="header-actions">
@@ -136,12 +136,18 @@ function Inicio() {
               <button onClick={() => setMenuFiltrosAbierto(!menuFiltrosAbierto)} style={{ position: 'absolute', right: '15px', background: 'none', border: 'none', fontWeight: 'bold', color: 'var(--naranja-fuerte)', cursor: 'pointer', fontSize: '16px' }}>Filtros ▾</button>
 
               {menuFiltrosAbierto && (
-                <div style={{ position: 'absolute', top: '65px', right: '0', background: 'white', border: '1px solid #E6DED7', borderRadius: '15px', padding: '20px', boxShadow: '0 8px 24px rgba(0,0,0,0.1)', zIndex: 100, width: '380px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                  <span style={{ fontSize: '16px', color: '#888', fontWeight: 'bold', borderBottom: '1px solid #eee', paddingBottom: '10px' }}>Filtro por categorías:</span>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+                <div style={{ position: 'absolute', top: '65px', right: '0', background: 'white', border: '1px solid #E6DED7', borderRadius: '15px', padding: '25px', boxShadow: '0 8px 30px rgba(0,0,0,0.15)', zIndex: 100, width: '420px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                  <span style={{ fontSize: '18px', color: '#888', fontWeight: 'bold', borderBottom: '1px solid #eee', paddingBottom: '12px' }}>Filtro por categorías:</span>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                     {categoriasDisponibles.map(cat => (
-                      <label key={cat} style={{ fontSize: '16px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', color: 'var(--gris-texto)' }}>
-                        <input type="checkbox" checked={filtrosSeleccionados.includes(cat)} onChange={() => manejarFiltroCategoria(cat)} style={{ transform: 'scale(1.3)', cursor: 'pointer' }} /> {cat}
+                      <label key={cat} style={{ fontSize: '18px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', color: 'var(--gris-texto)', userSelect: 'none' }}>
+                        <input 
+                          type="checkbox" 
+                          checked={filtrosSeleccionados.includes(cat)} 
+                          onChange={() => manejarFiltroCategoria(cat)} 
+                          style={{ transform: 'scale(1.5)', cursor: 'pointer', accentColor: '#D35400' }} 
+                        /> 
+                        {cat}
                       </label>
                     ))}
                   </div>
@@ -227,14 +233,16 @@ function Inicio() {
         
         <div className="recetas-grid">
           {recetasFiltradas.map((receta) => (
-            <div key={receta._id} className="receta-card">
+            // 1. Añadimos flex column y height 100% a la tarjeta principal para que ocupe todo el espacio sobrante
+            <div key={receta._id} className="receta-card" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
               <div className="card-image-container">
                 <Link to={`/receta/${receta._id}`}>
                   <img src={`http://localhost:3000/uploads/${receta.imagen}`} alt={receta.titulo} className="card-image" />
                 </Link>
               </div>
 
-              <div className="card-content">
+              {/* 2. Añadimos flex column y flexGrow 1 al contenido para que ocupe todo el espacio sobrante */}
+              <div className="card-content" style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
                 <Link to={`/receta/${receta._id}`} style={{ textDecoration: 'none' }}>
                   <h3 className="card-title">{receta.titulo.toUpperCase()}</h3>
                 </Link>
@@ -244,7 +252,6 @@ function Inicio() {
                   {/* Autor de la receta */}
                   <Link to={`/usuario/${receta.autor?._id || receta.autor}`} style={{ textDecoration: 'none', color: '#D35400', display: 'flex', alignItems: 'center', gap: '10px' }}>
                     
-                    {/* Círculo con imagen del autor de la receta */}
                     <div style={{ width: '35px', height: '35px', borderRadius: '50%', backgroundColor: '#D35400', color: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', fontWeight: 'bold', fontSize: '18px', overflow: 'hidden' }}>
                       {receta.autor?.foto_perfil_url ? (
                         <img src={`http://localhost:3000/uploads/${receta.autor.foto_perfil_url}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -272,8 +279,9 @@ function Inicio() {
 
                 <p className="card-description">{recortarInstrucciones(receta.instrucciones)}</p>
 
+                {/* 3. Gracias a lo anterior, este marginTop: 'auto' empujará el botón exactamente abajo del todo para que el botón se vea igual en todas las tarjetas. */}
                 <Link to={`/receta/${receta._id}`} style={{ textDecoration: 'none', marginTop: 'auto' }}>
-                  <button className="btn-view-recipe">VER RECETA</button>
+                  <button className="btn-view-recipe" style={{ width: '100%' }}>VER RECETA</button>
                 </Link>
               </div>
             </div>

@@ -4,28 +4,42 @@ const Usuario = require('../models/Usuario');
 const bcrypt = require('bcrypt');   // Para encriptar la contraseña
 
 
+// ENDPOINT PARA ACTUALIZAR PERFIL DEL USUARIO EN LA BASE DE DATOS
 exports.actualizarPerfil = async (req, res) => {
     try {
         const userId = req.params.id;
-        const { bio, borrar_foto } = req.body; // Se captura  la señal de borrar
+        const { username, bio, borrar_foto } = req.body; // Se capturan los datos del formulario username usuario para actualizar
         
         let updateData = {};
         
+        // --- ERROR 1: VALIDACIÓN DE NOMBRE DUPLICADO ---
+        if (username) {
+            // Buscamos si existe OTRO usuario con ese nombre (que no sea el actual)
+            const usuarioExistente = await Usuario.findOne({ username, _id: { $ne: userId } });
+            
+            if (usuarioExistente) {
+                return res.status(400).json({ mensaje: 'Ese nombre de usuario ya está en uso por otra persona.' });
+            }
+            
+            updateData.username = username; // Actualizamos el nombre de usuario para que se guarde en la base de datos y se recuerde al iniciar sesión
+        }
+
         if (bio !== undefined) {
             updateData.bio = bio;
         }
 
-        // Si hay archivo nuevo, lo guardamos. Si viene la señal de borrar, lo vaciamos.
+        // Gestión de la foto 
         if (req.file) {
             updateData.foto_perfil_url = req.file.filename;
         } else if (borrar_foto === 'true') {
             updateData.foto_perfil_url = ''; 
         }
 
+        // Se realiza la actualización en la base de datos
         const usuarioActualizado = await Usuario.findByIdAndUpdate(
             userId,
             updateData,
-            { new: true }
+            { new: true } // Para que devuelva el usuario ya cambiado
         ).select('-password');
 
         if (!usuarioActualizado) {

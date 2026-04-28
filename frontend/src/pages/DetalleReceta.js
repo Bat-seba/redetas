@@ -191,8 +191,8 @@ function DetalleReceta() {
           
           <nav className="nav-links">
             <Link to="/">Inicio</Link>
-            <Link to="/#">Más populares</Link>
-            <Link to="/#">Blog</Link>
+            <Link to="/mas-populares">Más populares</Link>
+            <Link to="/sobre-redetas">Sobre Redetas</Link>
           </nav>
           
           <div className="header-actions">
@@ -276,7 +276,7 @@ function DetalleReceta() {
                 </div>
               </div>
 
-              {/* COMENTARIOS */}
+              {/* CAJA DE COMENTARIOS */}
               <h2 style={{color: '#333', borderTop: '1px solid #eee', paddingTop: '20px', marginTop: '20px', fontSize: '24px'}}>💬 Comentarios ({comentarios.length})</h2>
               
               <div style={{marginTop: '20px', marginBottom: '30px'}}>
@@ -294,14 +294,53 @@ function DetalleReceta() {
                         <span style={{fontSize: '18px', color: '#444'}}>{com.texto}</span>
                         {com.id && (
                           <div className="acciones-comentario">
-                            <button className="btn-accion-comentario" onClick={() => setComentarioAResponder(comentarioAResponder === com.id ? null : com.id)}>Responder</button>
+                            
+                            {/* --- Los usuarios NO REGISTRADOS NO PUEDEN RESPONDER a los comentarios de las recetas publicadas --- */}
+                            <button 
+                              className="btn-accion-comentario" 
+                              onClick={() => {
+                                if (!usuarioLogueado) {
+                                  return Swal.fire('¡Ups!', 'Si quieres conversar sobre la receta, inicia sesión o regístrate.', 'info');
+                                }
+                                setComentarioAResponder(comentarioAResponder === com.id ? null : com.id);
+                              }}
+                            >
+                              Responder
+                            </button>
+                            
                             {esMiComentario && <button className="btn-accion-comentario btn-borrar" onClick={() => handleEliminarComentario(com.id)}>Borrar</button>}
                           </div>
                         )}
                       </div>
+
+                      {/* --- Las respuestas a los comentarios de las recetas --- */}
+                      {com.respuestas && com.respuestas.length > 0 && (
+                        <div style={{ marginLeft: '40px', marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                          {com.respuestas.map((resp, i) => {
+                            const esMiRespuesta = usuarioLogueado && (resp.usuarioId === idUsuarioActual);
+                            return (
+                              <div key={resp.id || i} style={{ backgroundColor: '#fcfcfc', padding: '10px 15px', borderRadius: '8px', borderLeft: '3px solid #D35400' }}>
+                                <span style={{fontWeight: 'bold', color: '#D35400', display: 'block', marginBottom: '3px', fontSize: '15px'}}>{resp.nombreUsuario}</span>
+                                <span style={{fontSize: '15px', color: '#555'}}>{resp.texto}</span>
+                                {/* Botón para borrar la propia respuesta si es el autor */}
+                                {esMiRespuesta && (
+                                  <button 
+                                    style={{ display: 'block', marginTop: '8px', background: 'none', border: 'none', color: '#d33', cursor: 'pointer', fontSize: '13px', padding: 0 }} 
+                                    onClick={() => handleEliminarRespuesta(com.id, resp.id)}
+                                  >
+                                    Borrar respuesta
+                                  </button>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {/* Caja para escribir la nueva respuesta */}
                       {comentarioAResponder === com.id && (
-                        <div className="caja-responder" style={{ marginTop: '10px' }}>
-                          <textarea value={textoRespuesta} onChange={(e) => setTextoRespuesta(e.target.value)} placeholder="Responde..." style={{width: '100%', boxSizing: 'border-box', padding: '10px', borderRadius: '6px', border: '1px solid #ccc', fontSize: '16px'}}></textarea>
+                        <div className="caja-responder" style={{ marginTop: '10px', marginLeft: '40px' }}>
+                          <textarea value={textoRespuesta} onChange={(e) => setTextoRespuesta(e.target.value)} placeholder="Responde a este comentario..." style={{width: '100%', boxSizing: 'border-box', padding: '10px', borderRadius: '6px', border: '1px solid #ccc', fontSize: '16px'}}></textarea>
                           <div style={{display: 'flex', gap: '10px', marginTop: '5px'}}>
                             <button onClick={() => handleEnviarRespuesta(com.id)} style={{padding: '8px 15px', backgroundColor: '#D35400', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer'}}>Enviar</button>
                             <button onClick={() => setComentarioAResponder(null)} style={{padding: '8px 15px', backgroundColor: '#eee', border: 'none', borderRadius: '5px'}}>Cancelar</button>

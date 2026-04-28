@@ -22,20 +22,33 @@ function Configuracion() {
     const [verPassConfirmar, setVerPassConfirmar] = useState(false);
 
     
-    // 1. CAMBIAR NOMBRE DE USUARIO
+    // 1. CAMBIAR NOMBRE DE USUARIO 
     const handleNombre = async (e) => {
         e.preventDefault();
+        
+        // Validación simple en cliente
+        if (!nuevoNombre.trim()) {
+            return Swal.fire('Atención', 'El nombre no puede estar vacío', 'warning');
+        }
+
         try {
             const res = await axios.put(`http://localhost:3000/api/v1/usuarios/${idUsuario}`, {
                 username: nuevoNombre
             });
-            // Actualizamos el localStorage para que el nombre cambie en toda la web
-            const usuarioActualizado = { ...usuarioLogueado, username: nuevoNombre };
-            localStorage.setItem('usuarioRedetas', JSON.stringify(usuarioActualizado));
+            
+            // Usamos el usuario que nos devuelve el servidor (res.data.usuario)
+            // Esto asegura que guardamos el dato real que está en la base de datos
+            localStorage.setItem('usuarioRedetas', JSON.stringify(res.data.usuario));
             
             Swal.fire('¡Éxito!', 'Nombre de usuario actualizado', 'success');
+            
+            // Opcional: refrescar para que el nombre cambie en el header de inmediato
+            window.location.reload(); 
+            
         } catch (error) {
-            Swal.fire('Error', 'No se pudo cambiar el nombre', 'error');
+            // Capturamos el error 400 (nombre duplicado) que enviamos desde el backend
+            const mensajeError = error.response?.data?.mensaje || 'No se pudo cambiar el nombre';
+            Swal.fire('Error', mensajeError, 'error');
         }
     };
 
