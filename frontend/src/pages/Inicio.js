@@ -28,6 +28,7 @@ function Inicio() {
   const [textoBusqueda, setTextoBusqueda] = useState('');
   const [mostrarSugerencias, setMostrarSugerencias] = useState(false);
   const [filtrosSeleccionados, setFiltrosSeleccionados] = useState([]);
+  const [menuAbierto, setMenuAbierto] = useState(false); // Estado responsivo del menú para móvil
 
   const categoriasDisponibles = ["Sin huevo", "Sin leche", "Sin azúcar", "Sin harinas", "Sin frutos secos", "Sin gluten"];
 
@@ -105,14 +106,24 @@ function Inicio() {
     <>
       <header className="main-header">
         <div className="header-container">
+          
+          {/* Botón Hamburguesa para dispositivos móviles (Invisible en ordenador) */}
+          <button 
+            className="burger-button" 
+            onClick={() => setMenuAbierto(!menuAbierto)}
+          >
+            {menuAbierto ? '✕' : '☰'} 
+          </button>
+
           <Link to="/" className="logo-container">
             <img src={logoPng} alt="Logo Redetas" className="logo-image" />
           </Link>
           
-          <nav className="nav-links">
-            <Link to="/">Inicio</Link>  
-            <Link to="/mas-populares">Más populares</Link> 
-            <Link to="/sobre-redetas">Sobre Redetas</Link>
+          {/* El menú escucha el estado de menuAbierto y se abre con el botón hamburguesa */}
+          <nav className={`nav-links ${menuAbierto ? 'open' : ''}`}>
+            <Link to="/" onClick={() => setMenuAbierto(false)}>Inicio</Link>  
+            <Link to="/mas-populares" onClick={() => setMenuAbierto(false)}>Más populares</Link> 
+            <Link to="/sobre-redetas" onClick={() => setMenuAbierto(false)}>Sobre Redetas</Link>
           </nav>
           
           <div className="header-actions">
