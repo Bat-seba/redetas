@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import '../App.css'; 
 import axios from 'axios';  
 import { useNavigate, Link } from 'react-router-dom';  
-import Swal from 'sweetalert2'; // Importamos la magia de SweetAlert2
+import Swal from 'sweetalert2'; 
 
 function Acceso() {
   const navigate = useNavigate();  
@@ -23,7 +23,21 @@ function Acceso() {
 
   const handleSubmit = async (e) => {
     e.preventDefault(); 
-    
+    // VALIDACIÓN DE CONTRASEÑA (Solo complejidad: 1 min, 1 may, 1 num)
+    if (!isLogin) {
+    // Regex: (?=.*[a-z]) al menos una minúscula, (?=.*[A-Z]) al menos una mayúscula, (?=.*\d) al menos un número
+    const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$/;
+  
+      if (!regexPassword.test(formData.password)) {
+        return Swal.fire({
+          title: 'Contraseña insegura',
+          text: 'La contraseña debe contener al menos una letra mayúscula, una minúscula y un número.',
+          icon: 'warning',
+          confirmButtonColor: '#D35400'
+        });
+      }
+    }
+
     if (isLogin) {
       try {
         const respuesta = await axios.post('http://localhost:3000/api/v1/auth/login', {
