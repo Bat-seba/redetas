@@ -1,169 +1,274 @@
+/* *********************************************************************************************************************
+//  RUTA: frontend/src/components/DetalleReceta.css 
+// 
+// 🔹 Este archivo define la hoja de estilos para la visualización detallada de las recetas.
+// 🔹 Incluye el diseño del layout, la barra lateral de recomendaciones y las animaciones de interacción.
+// ********************************************************************************************************************* */
+
+/**
+ * @fileoverview Estilos CSS para el componente de Detalle de Receta.
+ * Gestiona el sistema de cuadrículas (Grid), flexbox y animaciones de fotogramas clave (Keyframes).
+ * @author Bat-seba Rodríguez Moreno
+ */
+
 /* ==========================================================================
    ESTILOS GENERALES Y LAYOUT DE DETALLE DE RECETA
    ========================================================================== */
+
 .detalle-layout {
-  display: flex;
-  gap: 40px;
-  width: 100%;
-  max-width: none;
-  padding: 0 50px;
-  box-sizing: border-box;
-  margin: 30px auto;
-  align-items: flex-start;
+    display: flex;
+    gap: 40px;
+    width: 100%;
+    max-width: none;
+    padding: 0 50px;
+    box-sizing: border-box;
+    margin: 30px auto;
+    align-items: flex-start;
 }
 
 .detalle-principal {
-  flex: 1;
-  background-color: white;
-  border-radius: 12px;
-  padding: 50px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  min-width: 0;
+    flex: 1;
+    background-color: white;
+    border-radius: 12px;
+    padding: 50px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    min-width: 0;
 }
 
 .receta-cuerpo-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap: 60px;
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 60px;
 }
 
-/* FOTO DE LA RECETA  EN PANORÁMICA FIJADA */
+/* Propiedades para la visualización de la imagen principal en formato panorámico */
 .detalle-foto {
-  width: 100%;
-  aspect-ratio: 16/9; /* Formato panorámico */
-  max-height: 400px; /* Tope de altura para que suban los comentarios */
-  object-fit: cover;
-  border-radius: 12px;
-  margin-bottom: 25px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    width: 100%;
+    aspect-ratio: 16/9;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-.detalle-titulo { color: var(--naranja-fuerte); font-size: 44px; margin-bottom: 30px; text-transform: uppercase; text-align: center; border-bottom: 1px dashed #ccc; padding-bottom: 20px;}
-.seccion-texto { white-space: pre-line; line-height: 1.8; color: #444; margin-bottom: 30px; font-size: 20px;} 
-.boton-favorito { background-color: #fdf8f5; color: var(--naranja-fuerte); border: 2px solid var(--naranja-fuerte); padding: 10px 20px; border-radius: 20px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s;}
-.boton-favorito:hover { background-color: var(--naranja-fuerte); color: white;}
+.detalle-titulo { 
+    color: var(--naranja-fuerte); 
+    font-size: 44px; 
+    margin-bottom: 30px; 
+    text-transform: uppercase; 
+    text-align: center; 
+    border-bottom: 1px dashed #ccc; 
+    padding-bottom: 20px;
+}
 
-/* Comentarios */
+.seccion-texto { 
+    white-space: pre-line; 
+    line-height: 1.8; 
+    color: #444; 
+    margin-bottom: 30px; 
+    font-size: 20px;
+} 
+
+.boton-favorito { 
+    background-color: #fdf8f5; 
+    color: var(--naranja-fuerte); 
+    border: 2px solid var(--naranja-fuerte); 
+    padding: 10px 20px; 
+    border-radius: 20px; 
+    font-size: 18px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    transition: 0.3s;
+}
+
+.boton-favorito:hover { 
+    background-color: var(--naranja-fuerte); 
+    color: white;
+}
+
+/* Contenedores de comentarios de nivel superior */
 .comentario-caja {
-  background-color: #fdf8f5;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  border-left: 3px solid #D35400;
+    background-color: #fdf8f5;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border-left: 3px solid #D35400;
 }
-
-/* Sidebar */
-.detalle-sidebar { width: 480px; flex-shrink: 0; display: flex; flex-direction: column; gap: 20px; }
-.sidebar-titulo { font-size: 26px; color: var(--gris-texto); border-bottom: 3px solid var(--naranja-fuerte); padding-bottom: 10px; margin-bottom: 5px; font-weight: 900; }
-.receta-similar-card { display: flex; flex-direction: row; align-items: center; background: white; border-radius: 10px; padding: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: transform 0.2s; text-decoration: none; color: inherit; gap: 20px; }
-.receta-similar-card:hover { transform: translateX(-5px); box-shadow: 0 6px 15px rgba(211, 84, 0, 0.15); }
-.similar-foto { width: 220px; height: 150px; flex-shrink: 0; object-fit: cover; border-radius: 8px; }
-.similar-info { display: flex; flex-direction: column; justify-content: center; flex: 1; }
-.similar-titulo { margin: 0 0 15px 0; font-size: 20px; color: #333; line-height: 1.3; }
-.similar-stats { display: flex; justify-content: space-between; align-items: center; }
 
 /* ==========================================================================
-   SECCIÓN DE YUMMYS (Modo Blindado React)
+   DISEÑO DE BARRA LATERAL (SIDEBAR)
    ========================================================================== */
 
-/* 1. Animación de la cara lanzando el beso */
+.detalle-sidebar { 
+    width: 480px; 
+    flex-shrink: 0; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 20px; 
+}
+
+.sidebar-titulo { 
+    font-size: 26px; 
+    color: var(--gris-texto); 
+    border-bottom: 3px solid var(--naranja-fuerte); 
+    padding-bottom: 10px; 
+    margin-bottom: 5px; 
+    font-weight: 900; 
+}
+
+.receta-similar-card { 
+    display: flex; 
+    flex-direction: row; 
+    align-items: center; 
+    background: white; 
+    border-radius: 10px; 
+    padding: 15px; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
+    transition: transform 0.2s; 
+    text-decoration: none; 
+    color: inherit; 
+    gap: 20px; 
+}
+
+.receta-similar-card:hover { 
+    transform: translateX(-5px); 
+    box-shadow: 0 6px 15px rgba(211, 84, 0, 0.15); 
+}
+
+.similar-foto { 
+    width: 220px; 
+    height: 150px; 
+    flex-shrink: 0; 
+    object-fit: cover; 
+    border-radius: 8px; 
+}
+
+.similar-info { 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    flex: 1; 
+}
+
+.similar-titulo { 
+    margin: 0 0 15px 0; 
+    font-size: 20px; 
+    color: #333; 
+    line-height: 1.3; 
+}
+
+.similar-stats { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+}
+
+/* ==========================================================================
+   SECCIÓN DE YUMMYS (ANIMACIONES)
+   ========================================================================== */
+
+/* Definición de la secuencia de movimiento para la reacción táctil */
 @keyframes caraBesando {
-  0%   { transform: scale(1) rotate(0deg); }
-  30%  { transform: scale(1.3) rotate(-15deg); } /* Toma impulso */
-  70%  { transform: scale(1.3) rotate(15deg); }  /* Lanza el beso */
-  100% { transform: scale(1) rotate(0deg); }
+    0%   { transform: scale(1) rotate(0deg); }
+    30%  { transform: scale(1.3) rotate(-15deg); } 
+    70%  { transform: scale(1.3) rotate(15deg); }  
+    100% { transform: scale(1) rotate(0deg); }
 }
 
 .cara-besando {
-  animation: caraBesando 0.5s ease-in-out;
+    animation: caraBesando 0.5s ease-in-out;
 }
 
-/* 2. Animación del corazón volando (Ahora es un elemento real) */
+/* Definición de la trayectoria ascendente para el elemento de reacción */
 @keyframes volarCorazon {
-  0%   { opacity: 0; transform: translate(0, 0) scale(0.5); }
-  20%  { opacity: 1; transform: translate(-10px, -20px) scale(1.3); } /* Crece y sale de la boca */
-  100% { opacity: 0; transform: translate(30px, -80px) scale(1) rotate(20deg); } /* Sube flotando a la derecha */
+    0%   { opacity: 0; transform: translate(0, 0) scale(0.5); }
+    20%  { opacity: 1; transform: translate(-10px, -20px) scale(1.3); } 
+    100% { opacity: 0; transform: translate(30px, -80px) scale(1) rotate(20deg); } 
 }
 
 .corazon-volador {
-  animation: volarCorazon 0.6s ease-out forwards;
-  pointer-events: none; /* Para que el corazón no bloquee tus clics */
-  z-index: 10;
+    animation: volarCorazon 0.6s ease-out forwards;
+    pointer-events: none; 
+    z-index: 10;
 }
 
 /* ==========================================================================
-   ESTILOS PARA HILOS DE COMENTARIOS
+   ESTILOS PARA HILOS DE COMENTARIOS Y RESPUESTAS
    ========================================================================== */
 
-/* Botones de Responder y Borrar debajo del comentario */
 .acciones-comentario {
-  display: flex;
-  gap: 15px;
-  margin-top: 10px;
-  font-size: 14px;
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+    font-size: 14px;
 }
 
 .btn-accion-comentario {
-  background: none;
-  border: none;
-  color: #888;
-  cursor: pointer;
-  font-weight: bold;
-  padding: 0;
-  transition: color 0.2s;
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 0;
+    transition: color 0.2s;
 }
 
 .btn-accion-comentario:hover {
-  color: #D35400; /* Naranja al pasar el ratón */
+    color: #D35400; 
 }
 
-.btn-borrar { color: #cc0000; }
-.btn-borrar:hover { color: #ff0000; text-decoration: underline; }
+.btn-borrar { 
+    color: #cc0000; 
+}
 
-/* El cajoncito para escribir tu respuesta */
+.btn-borrar:hover { 
+    color: #ff0000; 
+    text-decoration: underline; 
+}
+
 .caja-responder {
-  margin-top: 15px;
-  margin-left: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  animation: fadeIn 0.3s ease-in-out;
+    margin-top: 15px;
+    margin-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    animation: fadeIn 0.3s ease-in-out;
 }
 
-/* El diseño de las respuestas (Tienen margen izquierdo para crear el hilo) */
+/* Estilos de sangría y diferenciación visual para respuestas anidadas */
 .respuesta-caja {
-  background-color: #f5f5f5; /* Un gris muy clarito para diferenciarlo */
-  padding: 12px 15px;
-  border-radius: 8px;
-  margin-top: 10px;
-  margin-left: 30px; /* Sangría clave para que parezca una respuesta */
-  border-left: 3px solid #ccc;
+    background-color: #f5f5f5; 
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+    margin-left: 30px; 
+    border-left: 3px solid #ccc;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-/* Botón para borrar respuestas */
 .acciones-respuesta {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 5px;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 5px;
 }
 
 .btn-borrar-respuesta {
-  background: none;
-  border: none;
-  color: #cc0000;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: bold;
-  opacity: 0.7;
-  transition: opacity 0.2s;
+    background: none;
+    border: none;
+    color: #cc0000;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    opacity: 0.7;
+    transition: opacity 0.2s;
 }
 
 .btn-borrar-respuesta:hover {
-  opacity: 1;
-  text-decoration: underline;
+    opacity: 1;
+    text-decoration: underline;
 }

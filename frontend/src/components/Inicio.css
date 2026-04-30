@@ -1,231 +1,254 @@
-/* ==========================================================================================================================================
-   ARCHIVO: Inicio.css que contiene el diseño visual del Feed principal donde se muestran todas las publicaciones.
+/* *********************************************************************************************************************
+//  RUTA: frontend/src/components/Inicio.css 
+// 
+// 🔹 Este archivo contiene el diseño visual del Feed principal donde se muestran todas las publicaciones.
+// 🔹 Implementa un sistema de cuadrícula flexible (CSS Grid) y estilos para las tarjetas de recetas (Cards).
+// ********************************************************************************************************************* */
 
-   🔹 Destaca el uso de CSS GRID para la maquetación adaptable de las tarjetas de recetas.
-
-   🔹 Aplica la paleta de colores corporativa para mantener la identidad visual de REDETAS.
-   ========================================================================================================================================== */
+/**
+ * @fileoverview Hoja de estilos para el componente Inicio.
+ * Gestiona la disposición de las tarjetas de recetas, iconografía de alérgenos y estados de interacción del CRUD.
+ * @author Bat-seba Rodríguez Moreno
+ */
 
 .main-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--gris-texto);
-  margin-bottom: 30px;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--gris-texto);
+    margin-bottom: 30px;
 }
 
-/* ------------------------------------------------------------------------------------------------ 
-   MAQUETACIÓN DE LA CUADRÍCULA: 
-   Se usa CSS Grid para que las recetas se organicen automáticamente.
-   'auto-fill' y 'minmax' hacen que la rejilla sea Responsive sin necesidad de Media Queries:
-   - Si la pantalla es grande, caben varias tarjetas de 300px en la misma fila.
-   - Si es pequeña (móvil), la tarjeta ocupará todo el ancho disponible (1fr).
------------------------------------------------------------------------------------------------- */
+/* ==========================================================================
+   MAQUETACIÓN DE LA CUADRÍCULA (FEED PRINCIPAL)
+   ========================================================================== */
+
 .recetas-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
-  gap: 30px;
+    display: grid;
+    /* Implementación de diseño adaptativo automático sin consultas de medios */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+    gap: 30px;
 }
 
-/* ------------------------------------------------------------------------------------------------ 
-   ESTILOS DE LA TARJETA INDIVIDUAL:
------------------------------------------------------------------------------------------------- */
+/* ==========================================================================
+   ESTILOS DE LA TARJETA (RECETA CARD)
+   ========================================================================== */
+
 .receta-card {
-  background-color: white; 
-  border-radius: 12px; 
-  
-  /* Cambiamos hidden por visible para que no "corte" el cartelito de las categorías */
-  overflow: visible; 
-  
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); 
-  transition: transform 0.3s ease;
+    background-color: white; 
+    border-radius: 12px; 
+    /* Permite la visibilidad de elementos posicionados absolutamente fuera del contenedor */
+    overflow: visible; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); 
+    transition: transform 0.3s ease;
 }
 
 .receta-card:hover {
-  transform: translateY(-5px); 
+    transform: translateY(-5px); 
 }
 
 .card-image-container {
-  height: 180px;
-  overflow: hidden;
-  background-color: var(--crema-fondo); 
-  
-  /*  Redondeamos manualmente las esquinas superiores de la foto */
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
+    height: 180px;
+    overflow: hidden;
+    background-color: var(--crema-fondo); 
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
 }
 
 .card-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* Evita deformaciones recortando la foto para llenar el contenedor */
+    width: 100%;
+    height: 100%;
+    /* Asegura que la imagen mantenga la proporción dentro del área definida */
+    object-fit: cover; 
 }
 
-/* Marcador de posición por si la receta no tiene foto URL */
 .card-image-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  background-color: #EEE; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background-color: #EEE; 
 }
 
 .card-content {
-  padding: 20px;
+    padding: 20px;
 }
 
 .card-title {
-  font-size: 20px;
-  color: var(--gris-texto);
-  margin-bottom: 10px;
+    font-size: 20px;
+    color: var(--gris-texto);
+    margin-bottom: 10px;
 }
 
 .card-description {
-  color: var(--gris-texto); 
-  font-size: 14px;
-  line-height: 1.6;
-  margin-bottom: 20px;
+    color: var(--gris-texto); 
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 20px;
 }
 
-/* ------------------------------------------------------------------------------------------------ 
-   ZONA DE ALÉRGENOS E ICONOGRAFÍA: 
------------------------------------------------------------------------------------------------- */
+/* ==========================================================================
+   SISTEMA DE ICONOGRAFÍA DE ALÉRGENOS
+   ========================================================================== */
+
 .apto-iconos {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
 }
 
-/* Estilos de respaldo por si falla la imagen del alérgeno */
-.icono-alerta {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%; 
-  background-color: var(--naranja-suave); 
-  color: white; 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 12px;
-  border: 2px solid white; 
-}
-
-/* Estilos para los nuevos iconos PNG personalizados (Sin huevo, sin gluten...) */
-.icono-categoria-img {
-  width: 40px; 
-  height: 40px;
-  object-fit: contain; /* Garantiza que el icono no se recorte ni deforme */
-  transition: transform 0.2s ease;
-  cursor: pointer; 
-}
-
-/* Se sube a 1.25 para que al pasar el ratón, el icono crezca más y se note bien */
-.icono-categoria-img:hover {
-  transform: scale(1.25);
-}
-
-/* ------------------------------------------------------------------------------------------------ 
-   BOTONES DE ACCIÓN (Llamadas a la acción y CRUD)
------------------------------------------------------------------------------------------------- */
-/* Botón principal usando el NARANJA FUERTE de la paleta cromática */
-.btn-view-recipe {
-  width: 100%;
-  background-color: var(--naranja-fuerte); 
-  color: white;
-  border: none;
-  border-radius: 20px;
-  padding: 12px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-bottom: 15px;
-  transition: opacity 0.3s ease;
-}
-
-.btn-view-recipe:hover {
-  opacity: 0.85;
-}
-
-/* Botones secundarios del CRUD (Editar/Borrar) - Diseño discreto para no competir con el principal */
-.form-actions-crud {
-  display: flex;
-  gap: 10px;
-}
-
-.btn-edit-action {
-  flex: 1;
-  background-color: #F1F1F1;
-  color: var(--gris-texto);
-  border: none;
-  border-radius: 4px;
-  padding: 8px;
-  cursor: pointer;
-}
-
-.btn-delete-action {
-  flex: 1;
-  background-color: #FFEBEB; 
-  color: #D93025; /* Texto rojo clásico para alertar sobre la acción destructiva del botón Borrar */
-  border: none;
-  border-radius: 4px;
-  padding: 8px;
-  cursor: pointer;
-}
-
-/* ------------------------------------------------------------------------------------------------ 
-   MAGIA: TEXTO FLOTANTE INSTANTÁNEO PARA LOS ICONOS
------------------------------------------------------------------------------------------------- */
+/* Estilos para el contenedor de texto flotante informativo (Tooltip) */
 .contenedor-icono-magico {
-  position: relative;
-  display: inline-block;
+    position: relative;
+    display: inline-block;
+}
+
+.icono-categoria-img {
+    width: 40px; 
+    height: 40px;
+    object-fit: contain; 
+    transition: transform 0.2s ease;
+    cursor: pointer; 
+}
+
+.icono-categoria-img:hover {
+    transform: scale(1.25);
 }
 
 .texto-flotante {
-  visibility: hidden;
-  width: max-content;
-  background-color: var(--naranja-fuerte); 
-  color: white;
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px 10px;
-  position: absolute;
-  z-index: 10;
-  bottom: 120%; /* Se coloca justo encima del icono */
-  left: 50%;
-  transform: translateX(-50%);
-  opacity: 0;
-  transition: opacity 0.2s ease-in-out;
-  font-size: 12px;
-  font-weight: bold;
-  pointer-events: none;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    visibility: hidden;
+    width: max-content;
+    background-color: var(--naranja-fuerte); 
+    color: white;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 10px;
+    position: absolute;
+    z-index: 10;
+    bottom: 120%; 
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+    font-size: 12px;
+    font-weight: bold;
+    pointer-events: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-/* El piquito del bocadillo apuntando hacia abajo */
+/* Indicador triangular del tooltip */
 .texto-flotante::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: var(--naranja-fuerte) transparent transparent transparent;
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: var(--naranja-fuerte) transparent transparent transparent;
 }
 
-/* Al pasar el ratón, el texto se hace visible al instante */
 .contenedor-icono-magico:hover .texto-flotante {
-  visibility: visible;
-  opacity: 1;
+    visibility: visible;
+    opacity: 1;
 }
 
-/* ------------------------------------------------------------------------------------------------ 
-   ESTILOS DEL FORMULARIO INTEGRADO (Modo Edición)
------------------------------------------------------------------------------------------------- */
-.edit-form { display: flex; flex-direction: column; gap: 10px; }
-.edit-form input, .edit-form textarea { width: 100%; padding: 8px; border: 1px solid #CCC; border-radius: 4px; color: var(--gris-texto); font-family: 'Open Sans', sans-serif;}
-.categorias-selector-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; font-size: 12px; color: var(--gris-texto); }
-.form-actions-edit { display: flex; gap: 10px; }
-.btn-save { flex: 1; background-color: #28a745; color: white; border: none; border-radius: 4px; padding: 8px; cursor: pointer; }
-.btn-cancel { flex: 1; background-color: #6c757d; color: white; border: none; border-radius: 4px; padding: 8px; cursor: pointer; }
+/* ==========================================================================
+   BOTONES DE ACCIÓN Y OPERACIONES CRUD
+   ========================================================================== */
+
+.btn-view-recipe {
+    width: 100%;
+    background-color: var(--naranja-fuerte); 
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 15px;
+    transition: opacity 0.3s ease;
+}
+
+.btn-view-recipe:hover {
+    opacity: 0.85;
+}
+
+.form-actions-crud {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-edit-action {
+    flex: 1;
+    background-color: #F1F1F1;
+    color: var(--gris-texto);
+    border: none;
+    border-radius: 4px;
+    padding: 8px;
+    cursor: pointer;
+}
+
+.btn-delete-action {
+    flex: 1;
+    background-color: #FFEBEB; 
+    color: #D93025; 
+    border: none;
+    border-radius: 4px;
+    padding: 8px;
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   INTERFAZ DE EDICIÓN EN LÍNEA (INLINE EDITING)
+   ========================================================================== */
+
+.edit-form { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 10px; 
+}
+
+.edit-form input, 
+.edit-form textarea { 
+    width: 100%; 
+    padding: 8px; 
+    border: 1px solid #CCC; 
+    border-radius: 4px; 
+    color: var(--gris-texto); 
+    font-family: inherit;
+}
+
+.categorias-selector-grid { 
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 10px; 
+    font-size: 12px; 
+    color: var(--gris-texto); 
+}
+
+.form-actions-edit { 
+    display: flex; 
+    gap: 10px; 
+}
+
+.btn-save { 
+    flex: 1; 
+    background-color: #28a745; 
+    color: white; 
+    border: none; 
+    border-radius: 4px; 
+    padding: 8px; 
+    cursor: pointer; 
+}
+
+.btn-cancel { 
+    flex: 1; 
+    background-color: #6c757d; 
+    color: white; 
+    border: none; 
+    border-radius: 4px; 
+    padding: 8px; 
+    cursor: pointer; 
+}

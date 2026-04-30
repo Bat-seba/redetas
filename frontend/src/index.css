@@ -1,25 +1,51 @@
-/* index.css */
+/* *********************************************************************************************************************
+//  RUTA: frontend/src/index.css
+// 
+// 🔹 Este archivo define la hoja de estilos global fundamental para la aplicación.
+// 🔹 Establece la paleta de colores corporativa mediante variables CSS (Custom Properties) y la tipografía base.
+// ********************************************************************************************************************* */
+
+/**
+ * @fileoverview Estilos globales y definición de tokens de diseño.
+ * Importa tipografías externas y configura el comportamiento visual por defecto del documento HTML.
+ * @author Bat-seba Rodríguez Moreno
+ */
+
+/* Importación de la familia tipográfica principal desde la red de distribución de contenidos (CDN) de Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
 
-/* DIFINICIÓNS DE LA PALETA DE COLORES CORPORATIVA  */
+/* ==========================================================================
+   DEFINICIÓN DE LA PALETA DE COLORES CORPORATIVA (DESIGN TOKENS)
+   ========================================================================== */
 :root {
-  --naranja-fuerte: #D35400;
-  --naranja-suave: #F19C79;
-  --crema-fondo: #FDF8F5;
-  --gris-texto: #333333;
+    /* Variables CSS globales para mantener la consistencia temática en toda la aplicación web */
+    --naranja-fuerte: #D35400;
+    --naranja-suave: #F19C79;
+    --crema-fondo: #FDF8F5;
+    --gris-texto: #333333;
 }
 
+/* ==========================================================================
+   RESETEOS GLOBALES Y ESTILOS BASE DEL DOCUMENTO
+   ========================================================================== */
 body {
-  margin: 0;
-  font-family: 'Open Sans', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  /* Aplicamos el fondo crema y el texto gris para toda la web */
-  background-color: var(--crema-fondo); 
-  color: var(--gris-texto); 
+    /* Eliminación del margen por defecto del navegador */
+    margin: 0;
+    
+    /* Aplicación de la tipografía importada con una fuente sans-serif genérica como respaldo */
+    font-family: 'Open Sans', sans-serif;
+    
+    /* Mejoras de renderizado para suavizado de bordes de fuentes en sistemas WebKit y macOS */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    
+    /* Aplicación del fondo institucional y color de texto base referenciando las variables CSS */
+    background-color: var(--crema-fondo); 
+    color: var(--gris-texto); 
 }
 
+/* Normalización de márgenes y color para la jerarquía de encabezados HTML */
 h1, h2, h3, h4, h5 {
-  color: var(--gris-texto);
-  margin-top: 0;
+    color: var(--gris-texto);
+    margin-top: 0;
 }
