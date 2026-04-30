@@ -121,7 +121,7 @@ REDETAS/
         ├── pages/            # Vistas principales de enrutamiento
         ├── App.js            # Configuración de React Router
         └── index.js          # Punto de entrada de React
-
+```
 ---
 
 **Autora:** Bat-seba Rodríguez Moreno - [https://github.com/Bat-seba](https://github.com/Bat-seba)
